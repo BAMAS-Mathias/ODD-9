@@ -1,0 +1,377 @@
+const {
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+  Header, Footer, AlignmentType, LevelFormat, TableOfContents,
+  HeadingLevel, BorderStyle, WidthType, ShadingType, PageNumber, PageBreak
+} = require('docx');
+const fs = require('fs');
+
+const PAGE_W = 12240, PAGE_H = 15840, MARGIN = 1440;
+const CONTENT_W = PAGE_W - 2 * MARGIN; // 9360
+
+const border = { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" };
+const borders = { top: border, bottom: border, left: border, right: border };
+
+function p(text, opts = {}) {
+  return new Paragraph({
+    alignment: AlignmentType.JUSTIFIED,
+    spacing: { after: 200, line: 300 },
+    children: [new TextRun({ text, ...opts })],
+  });
+}
+function h1(text, pageBreak = true) {
+  return new Paragraph({
+    heading: HeadingLevel.HEADING_1,
+    pageBreakBefore: pageBreak,
+    children: [new TextRun(text)],
+  });
+}
+function h2(text) {
+  return new Paragraph({
+    heading: HeadingLevel.HEADING_2,
+    children: [new TextRun(text)],
+  });
+}
+function h3(text) {
+  return new Paragraph({
+    heading: HeadingLevel.HEADING_3,
+    children: [new TextRun(text)],
+  });
+}
+function bullets(items) {
+  return items.map(t => new Paragraph({
+    numbering: { reference: "bullets", level: 0 },
+    spacing: { after: 120, line: 300 },
+    children: [new TextRun(t)],
+  }));
+}
+function cell(text, opts = {}) {
+  return new TableCell({
+    borders,
+    width: { size: opts.width || 3120, type: WidthType.DXA },
+    shading: opts.header ? { fill: "1F4E5F", type: ShadingType.CLEAR } : undefined,
+    margins: { top: 100, bottom: 100, left: 120, right: 120 },
+    children: [new Paragraph({
+      children: [new TextRun({ text, bold: !!opts.header, color: opts.header ? "FFFFFF" : "000000", size: opts.size || 22 })],
+    })],
+  });
+}
+function summaryTable() {
+  const widths = [2200, 3760, 3400];
+  const headerRow = new TableRow({
+    children: [
+      cell("Mission", { header: true, width: widths[0] }),
+      cell("Compétences et technologies mobilisées", { header: true, width: widths[1] }),
+      cell("Résultat clé", { header: true, width: widths[2] }),
+    ],
+  });
+  const data = [
+    ["Résolution de tickets", "PHP, SQL, MySQL, Jira, debug, lecture de logs", "+130 tickets traités, taux de réouverture < 5 %"],
+    ["Projet Cross Dock", "PHP, API marketplaces, modélisation de flux", "Retards d'expédition ramenés de 15 % à moins de 4 %"],
+    ["Migration Laravel / React", "Laravel, Eloquent, React, API REST, Sanctum", "Temps de chargement divisé par plus de 3"],
+    ["Passerelles (futur ETL) / Tests", "PHP, PHPUnit, CI/CD, architecture ETL", "4 connecteurs livrés, couverture de tests > 80 %"],
+    ["Publication Temu", "API REST, OAuth, mapping de catalogue", "Plus de 15 000 références publiées, taux d'erreur < 5 %"],
+    ["Caractéristiques de PDM", "Modèle EAV, MySQL, back-office d'administration", "Taux de rejet pour caractéristiques manquantes divisé par 3"],
+  ];
+  const rows = [headerRow].concat(data.map(r => new TableRow({
+    children: [
+      cell(r[0], { width: widths[0], size: 20 }),
+      cell(r[1], { width: widths[1], size: 20 }),
+      cell(r[2], { width: widths[2], size: 20 }),
+    ],
+  })));
+  return new Table({
+    width: { size: CONTENT_W, type: WidthType.DXA },
+    columnWidths: widths,
+    rows,
+  });
+}
+
+// ---------- CONTENU ----------
+
+const remerciements = [
+  h1("Remerciements", false),
+  p("Je tiens à remercier l'ensemble de l'équipe technique qui m'a accueilli durant cette alternance, et tout particulièrement mon tuteur en entreprise, pour le temps consacré à m'expliquer le fonctionnement de la plateforme, pour la confiance accordée sur des sujets à enjeu réel dès les premiers mois, et pour la patience dont il a fait preuve face à mes questions, notamment lors de la découverte des technologies Laravel et React. Je remercie également les membres de l'équipe opérationnelle et du support client, dont la disponibilité pour expliquer les règles métier implicites de la plateforme a été déterminante dans la réussite des missions présentées dans ce rapport, ainsi que le product owner pour avoir su, à chaque fois, replacer mes travaux dans leur contexte commercial."),
+  p("Je remercie enfin mon tuteur académique, [Nom], pour son accompagnement et ses conseils méthodologiques tout au long de cette alternance, ainsi que l'ensemble de l'équipe pédagogique de [Nom de l'établissement] pour la formation suivie en parallèle, qui m'a permis d'aborder ces missions avec les bases techniques nécessaires."),
+];
+
+const intro = [
+  h1("Introduction"),
+  p("Le présent rapport rend compte des missions qui m'ont été confiées durant mon alternance au sein de [Nom de l'entreprise], société spécialisée dans l'agrégation de flux pour places de marché (marketplaces). J'y ai occupé un poste de développeur au sein de l'équipe technique, en parallèle de ma formation en [intitulé de la formation], sur la période allant de [mois année] à [mois année]."),
+  h2("Présentation de l'entreprise et de son activité"),
+  p("L'entreprise pour laquelle j'ai travaillé propose à des vendeurs en ligne, des marques et des distributeurs une plateforme permettant de centraliser leur catalogue produit et de le diffuser simultanément sur de nombreuses places de marché telles qu'Amazon, Cdiscount, Fnac, ManoMano, eBay, Rakuten ou encore, plus récemment, Temu. Concrètement, le rôle de la plateforme est double : elle reçoit en entrée des flux produits hétérogènes (fichiers CSV, XML, flux issus d'un ERP ou d'un PIM client) et les retranscrit en sortie dans le format exact attendu par chaque marketplace, qui possède ses propres règles de catégorisation, ses propres champs obligatoires et ses propres contraintes de validation. Dans l'autre sens, la plateforme récupère les commandes, les statuts logistiques et les remontées de stock depuis ces mêmes marketplaces pour les retransmettre aux systèmes des clients."),
+  p("Cette activité d'agrégation de flux place l'entreprise au cœur d'un écosystème particulièrement mouvant : chaque marketplace fait évoluer régulièrement ses interfaces de programmation (API) et ses exigences, chaque client a des besoins spécifiques, et la moindre anomalie de synchronisation peut avoir des conséquences commerciales directes pour les vendeurs (rupture de stock non détectée, retard de traitement de commande, produit refusé à la publication). La fiabilité, la rapidité d'adaptation aux nouvelles exigences des marketplaces et la qualité du support client constituent donc des enjeux majeurs pour l'entreprise, et ce sont précisément ces enjeux qui ont structuré l'ensemble des missions qui m'ont été confiées."),
+  h2("Présentation de l'équipe d'accueil"),
+  p("J'ai été intégré au sein de l'équipe technique, composée de développeurs back-end, d'un développeur front-end, d'un lead technique et d'un product owner faisant le lien avec les équipes opérationnelles et le support client. L'équipe fonctionne en méthodologie agile, avec des sprints de deux semaines, des points quotidiens (daily stand-up), des revues de sprint et des rétrospectives. Les outils utilisés au quotidien sont Jira pour le suivi des tâches et des tickets, Git/GitLab pour la gestion de version et l'intégration continue, ainsi que Slack pour la communication interne. Le parc applicatif repose historiquement sur du PHP, avec une base de données MySQL, et fait l'objet depuis plusieurs mois d'une modernisation progressive vers la stack Laravel / React, à laquelle j'ai eu l'occasion de contribuer directement, comme je le détaille plus loin dans ce rapport."),
+  h2("Vue d'ensemble des missions confiées"),
+  p("Les missions qui m'ont été confiées tout au long de l'alternance ne doivent pas être lues comme une succession d'activités indépendantes : elles s'articulent en réalité autour d'un même fil conducteur, celui de la fiabilisation et de la modernisation de la chaîne de traitement des flux marketplace. J'ai débuté par la résolution de tickets de support, qui m'a permis de découvrir en profondeur le fonctionnement de la plateforme et d'identifier les zones de fragilité du système, notamment un module de supervision des flux particulièrement vétuste et peu lisible pour les équipes opérationnelles. Ce constat a directement motivé deux missions ultérieures : la migration de ce module vers la stack Laravel / React, et la mise en place de passerelles structurées, préfigurant un futur outil de type ETL, destinées à fiabiliser et industrialiser les transformations de flux que ce module supervise."),
+  p("En parallèle, j'ai contribué au projet Cross Dock, visant à automatiser le routage et le suivi des commandes expédiées directement par les fournnisseurs des clients sans passage en entrepôt, puis j'ai pris en charge le développement du connecteur permettant la publication de produits sur la marketplace Temu, nouvellement intégrée à l'offre de l'entreprise. Cette dernière mission s'est elle-même appuyée sur une évolution du modèle de gestion des caractéristiques produit (PDM), dernière mission présentée dans ce rapport, qui consistait à fiabiliser la manière dont les attributs produit (couleur, taille, matière, dimensions, etc.) sont stockés, validés et transmis aux différentes marketplaces."),
+  p("Le tableau ci-dessous présente une synthèse de ces six missions, détaillées chacune selon le pourquoi (le contexte et les attentes), le quoi (le travail réalisé), le comment (mon organisation et les difficultés rencontrées) et les résultats obtenus."),
+  summaryTable(),
+  h2("Méthodologie de travail et outils utilisés au quotidien"),
+  p("Avant de détailler chacune des missions, il me semble utile de préciser le cadre méthodologique général dans lequel j'ai évolué, dans la mesure où celui-ci a fortement influencé ma manière d'organiser mon travail sur l'ensemble des sujets présentés dans ce rapport. L'équipe technique fonctionne selon une méthodologie agile inspirée de Scrum, avec des sprints d'une durée de deux semaines à l'issue desquels sont présentées les réalisations en cours à l'ensemble de l'équipe et au product owner. Chaque sprint démarre par une séance de planification au cours de laquelle les tâches sont estimées collectivement et réparties, et se termine par une rétrospective permettant d'identifier les points d'amélioration dans notre fonctionnement collectif. Un point quotidien de quinze minutes (daily stand-up) permet à chacun de partager l'avancement de ses tâches et de signaler d'éventuels blocages, ce qui s'est révélé particulièrement utile lorsque je rencontrais une difficulté technique nécessitant l'aide d'un développeur plus expérimenté."),
+  p("L'ensemble des tâches, qu'il s'agisse de tickets de support ou de tâches de projet, est suivi dans Jira, ce qui permet de garder une trace de l'avancement, des décisions prises et des échanges techniques liés à chaque sujet. Le code est versionné avec Git, hébergé sur GitLab, selon un flux de travail fondé sur des branches de fonctionnalité (feature branches) et des revues de code systématiques avant toute fusion vers la branche principale : aucune de mes contributions n'a été intégrée sans avoir été relue par au moins un développeur sénior, ce qui constitue à la fois une garantie de qualité et un vecteur d'apprentissage continu, les retours de revue m'ayant permis de progressivement adopter les conventions et les bonnes pratiques de l'équipe. Un pipeline d'intégration continue exécute automatiquement les tests et un certain nombre de vérifications de style à chaque proposition de fusion, ce qui m'a habitué à considérer la rédaction de tests comme une étape normale du développement plutôt que comme une contrainte annexe."),
+  p("Sur le plan personnel, j'ai pris l'habitude, dès les premières semaines, de tenir un journal de bord recensant les tâches traitées, les difficultés rencontrées et les solutions retenues, qui m'a été précieux non seulement pour la rédaction de ce rapport, mais aussi pour gagner en efficacité au fil du temps en évitant de rechercher à nouveau des informations déjà identifiées par le passé. Cette discipline personnelle, conjuguée au cadre collectif imposé par l'équipe, constitue selon moi l'un des facteurs ayant le plus contribué à la qualité du travail restitué dans les pages qui suivent."),
+];
+
+// ---------- MISSION 1 : TICKETS ----------
+const m1 = [
+  h1("Mission 1 — Résolution de tickets de support et de maintenance applicative"),
+  h2("Pourquoi cette mission m'a-t-elle été confiée ?"),
+  p("Dès mon arrivée, il a été décidé que je commencerais par traiter des tickets de maintenance corrective remontés par le support client de niveau 1 ou directement détectés par l'équipe opérationnelle. Ce choix répondait à deux logiques complémentaires du point de vue de l'entreprise. D'une part, la base de code de la plateforme, développée et enrichie depuis plusieurs années, est volumineuse et faiblement documentée ; la résolution de tickets constitue une manière progressive et encadrée de découvrir cette base de code, module après module, sans mettre en péril une fonctionnalité critique dès les premières semaines. D'autre part, le volume de tickets en attente dépassait la capacité de traitement de l'équipe sénior, déjà fortement mobilisée sur les projets de fond ; ma contribution avait donc une utilité opérationnelle réelle et immédiate, en désengorgeant la file d'attente et en réduisant le délai de traitement perçu par les clients."),
+  p("L'attente formulée par mon tuteur n'était pas seulement de corriger des bugs, mais de comprendre, pour chaque ticket, la cause racine du dysfonctionnement et son impact potentiel sur d'autres parties du système, afin d'éviter les correctifs superficiels qui masquent le problème sans le résoudre. Cette exigence de rigueur a structuré toute ma méthode de travail sur cette mission."),
+  h2("Quoi : la nature du travail réalisé"),
+  p("Les tickets que j'ai traités relevaient de plusieurs catégories récurrentes. Une première catégorie concernait les anomalies de synchronisation de stock entre le système d'information du client (ERP ou PIM) et les marketplaces, pouvant conduire à de la survente (un produit vendu alors qu'il n'était plus disponible) ou, à l'inverse, à une indisponibilité affichée à tort. Une deuxième catégorie regroupait les erreurs de mapping de catégories ou d'attributs lors de l'export vers une marketplace, provoquant le rejet du produit ou son classement dans une catégorie erronée. Une troisième catégorie portait sur des incohérences de calcul, par exemple sur la taxe applicable selon le pays de destination lors de l'export vers Amazon, ou sur l'arrondi des prix après application d'une règle de marge. Enfin, une dernière catégorie concernait des anomalies d'affichage ou de comportement dans le back-office utilisé par les équipes internes."),
+  p("Je peux détailler deux exemples représentatifs. Le premier concernait un client dont les prix affichés sur une marketplace ne correspondaient pas aux prix renseignés dans son flux source pour certains pays européens. L'investigation a montré que la règle de calcul de la TVA appliquait par défaut le taux français même lorsque le pays de livraison différait, en raison d'une valeur de configuration non transmise correctement dans un cas particulier de marketplace multi-pays. La correction a nécessité de revoir la logique de résolution du taux de TVA et d'ajouter un test de non-régression couvrant explicitement ce cas. Le second exemple portait sur un décalage de stock répété chez un client à fort volume : l'analyse des journaux d'exécution a révélé qu'une tâche planifiée (cron) de synchronisation s'exécutait parfois en double lors de pics de charge, provoquant des écritures concurrentes en base de données. J'ai proposé et implémenté un verrou applicatif empêchant deux exécutions simultanées de la même tâche, en plus d'un correctif sur la requête de mise à jour elle-même."),
+  h2("Comment : organisation personnelle et difficultés rencontrées"),
+  p("Pour chaque ticket, j'ai suivi une méthode constante : reproduire l'anomalie dans un environnement de test à partir des informations fournies par le support, consulter les journaux applicatifs pour situer précisément le point de défaillance, isoler la portion de code concernée, proposer un correctif, puis rédiger un test automatisé permettant de garantir que l'anomalie ne pourrait pas se reproduire silencieusement. Les tickets les plus simples étaient traités en quelques heures ; les plus complexes, en particulier ceux impliquant plusieurs modules ou des effets de bord peu visibles, pouvaient s'étaler sur plusieurs jours et faisaient alors l'objet d'un accompagnement par un développeur sénior, sous forme de points de débogage en binôme."),
+  p("La principale difficulté a résidé dans le caractère faiblement documenté et fortement couplé de certaines parties historiques du code, où une même fonction pouvait être appelée depuis plusieurs contextes métier avec des effets différents selon les paramètres reçus. J'ai surmonté cette difficulté en prenant l'habitude de cartographier, avant toute modification, l'ensemble des points d'appel d'une fonction à l'aide de recherches dans le code et d'outils d'analyse statique, afin de mesurer l'impact réel d'un changement avant de le valider. J'ai également constitué progressivement, pour mon propre usage puis partagé avec l'équipe, un document recensant les zones du code les plus sensibles et les pièges déjà rencontrés, qui s'est révélé utile pour les missions suivantes."),
+  h2("Résultats obtenus"),
+  p("Sur l'ensemble de la période d'alternance, j'ai traité plus de cent trente tickets, avec un taux de réouverture (ticket rouvert après correctif jugé insuffisant) inférieur à cinq pour cent, ce qui témoigne de la fiabilité des corrections apportées. Au-delà du chiffre, cette mission a eu un effet structurant sur la suite de l'alternance : la connaissance fine de la plateforme acquise ticket après ticket m'a permis d'aborder les missions de projet avec une compréhension réelle des enjeux métier et des points de fragilité technique, et c'est d'ailleurs un constat issu de cette mission — la difficulté pour l'équipe opérationnelle à diagnostiquer les anomalies de flux via l'outil de supervision existant — qui a directement motivé deux des missions présentées dans la suite de ce rapport."),
+  h2("Compétences mobilisées et enseignements tirés"),
+  p("Cette première mission m'a permis de développer une compétence que je considère aujourd'hui comme essentielle pour un développeur, et qui n'est pourtant pas toujours mise en avant dans la formation académique : la capacité à diagnostiquer méthodiquement une anomalie avant de chercher à la corriger, plutôt que de procéder par tentatives successives. J'ai également appris à lire et interpréter des journaux applicatifs volumineux pour en extraire l'information pertinente, ainsi qu'à mesurer l'impact potentiel d'une modification dans un système dont je ne maîtrisais pas encore l'ensemble des dépendances. Sur le plan relationnel, le contact régulier avec l'équipe support m'a appris à reformuler un problème technique en termes compréhensibles par un interlocuteur non développeur, une compétence que j'ai réutilisée à de nombreuses reprises par la suite, notamment lors de l'intégration de Temu."),
+];
+
+// ---------- MISSION 2 : CROSS DOCK ----------
+const m2 = [
+  h1("Mission 2 — Projet Cross Dock"),
+  h2("Pourquoi cette mission m'a-t-elle été confiée ?"),
+  p("Le cross dock désigne un mode d'expédition dans lequel la commande passée sur une marketplace n'est pas préparée depuis un entrepôt du vendeur, mais transmise directement à un fournisseur partenaire qui se charge de l'expédition vers le client final, sans étape de stockage intermédiaire chez le vendeur. Un nombre croissant de clients de l'entreprise fonctionnait selon ce modèle, qui permet de proposer un catalogue large sans en supporter le coût de stockage. Or, les marketplaces imposent des délais stricts de confirmation d'expédition et de transmission du numéro de suivi (généralement sous 24 à 48 heures selon la marketplace), sous peine de pénalités pouvant aller jusqu'à la dégradation du compte vendeur. Le processus existant reposait en partie sur des relances manuelles entre les équipes opérationnelles et les fournisseurs, ce qui générait des retards récurrents et avait déjà conduit à plusieurs pénalités constatées par des clients."),
+  p("La mission qui m'a été confiée visait donc à automatiser ce routage et ce suivi, afin de fiabiliser le respect des délais imposés par les marketplaces et de réduire la charge opérationnelle associée aux relances manuelles. Il s'agissait d'une mission à enjeu commercial direct, dans la mesure où des pénalités répétées peuvent dégrader la visibilité des produits d'un client, voire entraîner la suspension de son compte vendeur."),
+  h2("Quoi : la nature du travail réalisé"),
+  p("J'ai commencé par cartographier le flux existant : réception de la commande via webhook depuis la marketplace, enregistrement en base de données, puis répartition manuelle vers le fournisseur concerné. À partir de cette cartographie, j'ai conçu, en lien avec le product owner et un responsable des opérations logistiques, un modèle de données permettant de distinguer explicitement les commandes relevant du cross dock de celles traitées en stock propre, et de qualifier chaque commande cross dock selon le fournisseur, la zone géographique et le délai contractuel applicable."),
+  p("J'ai ensuite développé un service de routage automatique chargé de déterminer, pour chaque commande entrante, le fournisseur destinataire à partir de règles de correspondance (référence produit, fournisseur rattaché, capacité déclarée), puis de transmettre la commande à ce fournisseur selon le canal qu'il utilise — interface de programmation pour les fournisseurs les plus structurés, fichier déposé sur un espace dédié pour les autres. Une fois l'expédition confirmée par le fournisseur, le service met automatiquement à jour le statut de la commande et transmet le numéro de suivi à la marketplace d'origine via son API, dans le respect du format attendu par chacune. J'ai également développé un tableau de bord à destination des équipes opérationnelles, listant en temps réel les commandes cross dock dont le délai de confirmation approche de son terme, afin de permettre une relance proactive sur les cas à risque plutôt qu'une découverte après coup."),
+  h2("Comment : organisation personnelle et difficultés rencontrées"),
+  p("J'ai procédé par itérations courtes, en commençant par un périmètre restreint à un seul fournisseur pilote disposant d'une interface de programmation déjà structurée, avant de généraliser progressivement le service aux autres fournisseurs. Cette approche m'a permis de valider rapidement le modèle de données et la logique de routage sur un cas réel, puis d'ajuster le service au contact des spécificités rencontrées avec les fournisseurs suivants, plutôt que de chercher à anticiper l'ensemble des cas particuliers dès la conception."),
+  p("Les principales difficultés ont tenu à l'hétérogénéité des canaux fournisseurs : certains exposaient une API REST documentée, d'autres ne traitaient les commandes que par fichier déposé manuellement à intervalles réguliers, ce qui m'a contraint à concevoir une interface interne commune (transmission de la commande, réception de la confirmation) capable de s'adapter à ces deux modes de communication sans dupliquer la logique métier. Une deuxième difficulté a porté sur la criticité du traitement : une commande transmise deux fois au fournisseur, par exemple à la suite d'une nouvelle tentative après un délai de réponse dépassé, devait impérativement ne pas se traduire par une double expédition. J'ai traité ce point en rendant le traitement idempotent, via un identifiant unique de transmission vérifié avant tout nouvel envoi. Enfin, les environnements de test fournis par les marketplaces pour valider la transmission du numéro de suivi étaient limités, ce qui a nécessité des tests plus prudents en production, sur un périmètre restreint, avant généralisation."),
+  h2("Résultats obtenus"),
+  p("Le taux de commandes cross dock dont la confirmation d'expédition dépassait le délai imposé par la marketplace est passé d'environ quinze pour cent avant la mise en place du service à moins de quatre pour cent après son déploiement complet, sur la base des indicateurs suivis par l'équipe opérationnelle. Aucune nouvelle pénalité liée à un retard de confirmation n'a été recensée pour les clients migrés sur le nouveau dispositif depuis sa mise en production. Au-delà de cet indicateur, le service a permis de réduire significativement le temps consacré par l'équipe opérationnelle aux relances manuelles, temps qui a pu être réorienté vers le traitement des cas réellement exceptionnels. Le module a depuis été étendu à de nouveaux fournisseurs au-delà du périmètre initial sur lequel j'étais intervenu."),
+  h2("Compétences mobilisées et enseignements tirés"),
+  p("Ce projet m'a permis de me confronter pour la première fois à la conception d'un système devant gérer des échanges asynchrones avec des partenaires externes peu standardisés, et de comprendre concrètement la notion d'idempotence, jusqu'alors pour moi davantage théorique que pratique. J'ai également pris conscience de l'importance de concevoir, dès la phase de modélisation, des garde-fous permettant de détecter automatiquement les situations à risque (ici, l'approche d'un délai contractuel) plutôt que de découvrir un problème une fois qu'il s'est déjà matérialisé. Enfin, le travail conjoint avec un interlocuteur métier de la logistique m'a appris à formaliser des règles de gestion exprimées de façon informelle en spécifications suffisamment précises pour être implémentées sans ambiguïté."),
+];
+
+// ---------- MISSION 3 : MIGRATION LARAVEL/REACT ----------
+const m3 = [
+  h1("Mission 3 — Migration vers Laravel / React"),
+  h2("Pourquoi cette mission m'a-t-elle été confiée ?"),
+  p("La plateforme historique de l'entreprise repose sur une base de code PHP ancienne, développée sans framework structurant et avec une interface utilisateur construite en jQuery. Cette architecture, après plusieurs années d'évolutions successives, présentait une dette technique importante : les nouvelles fonctionnalités étaient longues à développer car peu de logique était réutilisable, les pages se rechargeaient entièrement à chaque action, et certaines dépendances logicielles n'étaient plus maintenues, ce qui posait des questions de sécurité. L'entreprise avait donc engagé une stratégie de migration progressive vers une architecture moderne, avec un back-end Laravel exposant une API et un front-end React consommant cette API, plutôt qu'une réécriture complète et risquée de l'ensemble de la plateforme en une seule fois."),
+  p("Le module retenu comme pilote de cette migration était le tableau de bord de supervision des flux et des connecteurs, utilisé quotidiennement par les équipes opérationnelles pour suivre l'état des imports et exports vers les marketplaces. Ce choix n'était pas anodin : c'est justement en traitant des tickets sur ce module, dans le cadre de la première mission présentée dans ce rapport, que j'avais constaté à quel point son ergonomie datée et ses temps de chargement élevés compliquaient le travail quotidien des équipes. Mon tuteur a jugé pertinent de me confier ce module comme premier cas réel de migration, à la fois parce que je le connaissais déjà bien et parce qu'il constituait un périmètre suffisamment circonscrit pour servir de cas d'école avant un déploiement plus large de la démarche à d'autres modules."),
+  h2("Quoi : la nature du travail réalisé"),
+  p("J'ai d'abord réalisé un audit fonctionnel du module existant, en recensant l'ensemble des règles métier qu'il implémentait, y compris celles qui n'apparaissaient dans aucune documentation et que j'ai dû reconstituer à partir du code et d'entretiens avec les utilisateurs internes. J'ai ensuite modélisé les données correspondantes côté Laravel, sous forme de migrations de base de données et de modèles Eloquent, en conservant la compatibilité avec les tables existantes afin de permettre une cohabitation temporaire entre l'ancien et le nouveau système pendant la phase de transition."),
+  p("J'ai développé les points d'entrée de l'API REST exposant les données nécessaires au tableau de bord — statut des connecteurs, historique des exécutions, détail des erreurs de flux — en intégrant la validation des requêtes, la pagination des résultats et une gestion homogène des erreurs renvoyées au client. Côté front-end, j'ai développé les composants React correspondants, avec gestion de l'état applicatif, appels asynchrones à l'API, gestion des filtres de recherche et affichage des erreurs en temps réel. J'ai également mis en place l'authentification des appels API via Laravel Sanctum, afin de sécuriser l'accès aux données depuis le nouveau front-end, et j'ai rédigé des tests unitaires avec PHPUnit pour les contrôleurs et services Laravel les plus critiques. Enfin, j'ai documenté les choix d'architecture retenus afin que les modules suivants puissent suivre le même schéma de migration."),
+  h2("Comment : organisation personnelle et difficultés rencontrées"),
+  p("J'ai travaillé en binôme avec un développeur sénior référent de la stratégie de migration, dans une logique de montée en compétence accélérée : Laravel et React étaient des technologies nouvelles pour moi, découvertes en parallèle de leur mise en pratique sur ce projet. J'ai consacré une part de mon temps personnel à la documentation officielle de ces frameworks ainsi qu'à des tutoriels, afin de ne pas ralentir l'avancement du projet par un apprentissage trop lent. La démarche de migration suivie correspond à ce que l'on appelle le « strangler pattern » : le nouveau module est développé et activé progressivement, en redirigeant une part croissante du trafic vers lui, tout en conservant l'ancien module actif en parallèle jusqu'à validation complète, ce qui limite le risque en cas d'anomalie."),
+  p("La principale difficulté a consisté à reproduire fidèlement des règles métier complexes et parfois implicites du module historique, certaines comportant des cas particuliers non documentés que je n'ai découverts qu'au moment des tests de non-régression, en comparant les résultats affichés par l'ancien et le nouveau module sur un même jeu de données. J'ai traité cette difficulté en formalisant systématiquement, avant tout développement, les règles identifiées dans un document partagé avec mon tuteur, validé avant implémentation, ce qui a permis de lever les ambiguïtés en amont plutôt qu'en aval. Une seconde difficulté a tenu à la cohabitation temporaire des deux systèmes, qui imposait de répercuter certains correctifs sur l'ancien module pendant toute la durée de la transition, une charge de double maintenance dont j'ai dû tenir compte dans la planification de mon temps."),
+  h2("Résultats obtenus"),
+  p("Le module migré a été mis en production sans régression fonctionnelle majeure signalée par les utilisateurs internes, après une phase de validation croisée entre ancien et nouveau système. Le temps de chargement du tableau de bord est passé d'environ trois secondes et demie à moins d'une seconde, grâce au passage à une architecture découplée où seules les données nécessaires sont rechargées de manière asynchrone, sans rechargement complet de la page. Les retours des équipes opérationnelles ont été nettement positifs sur la nouvelle interface, notamment sur la rapidité des filtres de recherche et la clarté de l'affichage des erreurs de flux. Sur le plan personnel, cette mission a constitué la principale source de montée en compétence technique de mon alternance, et la documentation que j'ai rédigée a servi de référence pour la migration ultérieure d'un autre module par l'équipe."),
+  h2("Compétences mobilisées et enseignements tirés"),
+  p("Cette mission a très largement contribué à ma progression technique sur l'ensemble de l'alternance : la découverte de Laravel m'a permis de comprendre l'intérêt concret d'un framework structurant (organisation en couches, ORM, validation déclarative) par comparaison avec le code legacy que je traitais par ailleurs dans le cadre des tickets, et la découverte de React m'a sensibilisé aux problématiques propres au développement d'interfaces réactives, notamment la gestion de l'état et des appels asynchrones. Sur le plan méthodologique, j'ai compris l'intérêt d'une migration progressive plutôt que d'une réécriture intégrale, et j'ai pu mesurer concrètement le coût, en termes de double maintenance, d'une période de cohabitation entre deux systèmes, ce qui m'a rendu plus attentif à la nécessité de circonscrire et de documenter clairement le périmètre d'une migration avant de la démarrer."),
+];
+
+// ---------- MISSION 4 : PASSERELLES / ETL / TESTS ----------
+const m4 = [
+  h1("Mission 4 — Mise en place de passerelles (futur ETL) et tests associés"),
+  h2("Pourquoi cette mission m'a-t-elle été confiée ?"),
+  p("L'activité de l'entreprise repose sur la transformation de flux produits hétérogènes en provenance de nombreux clients vers les formats attendus par autant de marketplaces, chacune avec ses propres règles de catégorisation, ses champs obligatoires et ses contraintes de validation. Or, ces transformations étaient historiquement implémentées sous forme de scripts spécifiques, écrits au fil du temps et au fil des besoins, sans architecture commune ni couverture de tests systématique. Cette situation posait un problème de fond identifié à plusieurs reprises lors du traitement de tickets dans le cadre de ma première mission : une part importante des anomalies de flux remontées par les clients trouvait son origine dans ces scripts fragiles, dont les effets de bord étaient difficiles à anticiper."),
+  p("Face à la croissance continue du nombre de marketplaces et de fournisseurs intégrés, l'équipe technique avait engagé une réflexion sur la mise en place, à terme, d'un véritable outil de type ETL (Extract, Transform, Load) centralisant l'ensemble de ces transformations selon une architecture commune et testable. La mission qui m'a été confiée constituait la première étape concrète de cette réflexion : développer des passerelles structurées entre certaines sources et certaines destinations, selon un modèle générique réutilisable, accompagnées de tests automatisés garantissant leur fiabilité, avant d'envisager la généralisation de cette approche à l'ensemble des flux."),
+  h2("Quoi : la nature du travail réalisé"),
+  p("J'ai d'abord analysé les flux existants afin d'identifier les règles de transformation réellement appliquées, qu'elles soient documentées ou qu'elles ne résident que dans le code des scripts historiques. J'ai ensuite conçu une architecture de passerelle générique, structurée selon une interface commune en trois étapes — extraction des données sources, transformation selon les règles de mapping propres à la destination, puis chargement dans le format final attendu — inspirée des principes classiques d'un pipeline ETL, mais appliquée ici à un périmètre volontairement restreint en première étape."),
+  p("Sur cette base, j'ai développé quatre connecteurs couvrant plusieurs combinaisons source-destination jugées prioritaires par l'équipe, en raison de leur volume ou de leur taux d'anomalies constaté. Chaque connecteur intègre une gestion explicite des erreurs (champ manquant, valeur hors plage, format invalide) avec une journalisation structurée permettant d'identifier rapidement la cause d'un échec, ainsi qu'un mécanisme d'alerte en cas d'échec répété d'un même flux. J'ai accompagné chaque connecteur d'une suite de tests automatisés avec PHPUnit, couvrant à la fois les cas nominaux et des cas limites construits à partir des anomalies réellement rencontrées en production (valeurs nulles, encodages incorrects, caractères spéciaux non échappés), ainsi que des tests d'intégration s'appuyant sur des jeux de données réels anonymisés, comparant systématiquement la sortie produite à la sortie attendue. L'ensemble de ces tests a été intégré au pipeline d'intégration continue, afin qu'ils s'exécutent automatiquement à chaque modification du code."),
+  h2("Comment : organisation personnelle et difficultés rencontrées"),
+  p("J'ai adopté une démarche progressive, en développant d'abord un connecteur pilote sur un flux dont je connaissais déjà bien les anomalies grâce à mon expérience de traitement de tickets, ce qui m'a permis de valider rapidement l'architecture générique avant de l'appliquer aux connecteurs suivants. Pour les règles de transformation les plus critiques, j'ai pratiqué une forme de développement piloté par les tests, en écrivant les cas de test attendus avant ou en parallèle de l'implémentation, afin de clarifier mes propres hypothèses sur le comportement attendu avant de coder. J'ai organisé des échanges réguliers avec les membres de l'équipe opérationnelle disposant d'une connaissance fine, souvent informelle, des règles de mapping attendues par chaque marketplace, connaissance qui n'était jusque-là pas formalisée dans la documentation technique."),
+  p("La principale difficulté a résidé dans l'équilibre à trouver entre la généricité de l'architecture de passerelle, nécessaire pour qu'elle reste réutilisable pour de futurs connecteurs, et la prise en compte des spécificités propres à chaque marketplace, qui ne pouvaient pas toutes être anticipées dès la conception. J'ai traité ce point en limitant volontairement le périmètre générique aux étapes réellement communes à tous les connecteurs, et en isolant les spécificités dans des composants dédiés à chaque destination, plutôt que de chercher une abstraction unique couvrant tous les cas. Une seconde difficulté a tenu à la qualité hétérogène des données sources, certains clients transmettant des flux avec des valeurs manquantes ou des encodages incohérents, ce qui m'a conduit à renforcer la phase de validation en amont de la transformation plutôt qu'à la corriger après coup."),
+  h2("Résultats obtenus"),
+  p("Les quatre connecteurs développés ont été mis en production avec une couverture de tests automatisés supérieure à quatre-vingts pour cent du code concerné, un niveau jusque-là inédit pour cette partie de la plateforme. Dans les deux mois suivant le déploiement, le nombre de tickets de support liés aux flux couverts par ces connecteurs a diminué d'environ trente pour cent par rapport à la période précédente, confirmant le lien direct entre l'absence de tests automatisés et la fréquence des anomalies constatées. Au-delà de ces résultats chiffrés, l'architecture de passerelle que j'ai conçue et documentée a été retenue par l'équipe comme socle de référence pour la suite des travaux de centralisation des flux vers un futur outil ETL plus large, dont le pilotage a été confié à l'équipe lead technique pour la phase suivante."),
+  h2("Compétences mobilisées et enseignements tirés"),
+  p("Cette mission m'a permis de découvrir concrètement les principes d'une architecture de type ETL, jusqu'alors connus de moi uniquement de façon théorique, et de comprendre par la pratique pourquoi la séparation explicite entre extraction, transformation et chargement facilite à la fois les tests et l'évolution future d'un système de traitement de données. Sur le plan des pratiques de test, j'ai pris l'habitude de construire mes jeux de test à partir d'anomalies réellement observées plutôt qu'à partir de cas que j'imaginais a priori, ce qui m'a permis d'obtenir une couverture plus pertinente qu'une couverture purement quantitative. Cette mission m'a enfin confirmé l'intérêt d'investir du temps dans la conception d'une architecture avant de se lancer dans l'implémentation, un investissement qui s'est avéré payant lorsqu'il a fallu généraliser le modèle à de nouveaux connecteurs."),
+];
+
+// ---------- MISSION 5 : TEMU ----------
+const m5 = [
+  h1("Mission 5 — Publication de produits sur Temu"),
+  h2("Pourquoi cette mission m'a-t-elle été confiée ?"),
+  p("Temu est une marketplace internationale dont la croissance a été particulièrement rapide ces dernières années, et plusieurs clients de l'entreprise avaient exprimé le souhait d'y diffuser leur catalogue afin de bénéficier de cette audience en forte expansion. L'entreprise a donc décidé d'ajouter Temu à la liste des marketplaces disponibles sur sa plateforme. Cette mission m'a été confiée en raison de la disponibilité que j'avais à ce moment de l'alternance, mais aussi parce qu'elle constituait, du point de vue de mon tuteur, une occasion pertinente de me confronter à un cas d'intégration complet, depuis l'étude d'une documentation d'API encore jeune et évolutive jusqu'à la mise en production, dans un contexte où aucune solution interne existante ne pouvait être simplement répliquée."),
+  p("L'enjeu pour l'entreprise était à la fois commercial — proposer rapidement cette nouvelle marketplace à ses clients pour ne pas perdre l'avantage du premier entrant face à la concurrence — et technique, dans la mesure où la documentation publique de l'API Temu, encore récente, comportait des zones d'ombre et évoluait sans préavis systématique, ce qui supposait une démarche d'intégration prudente et itérative."),
+  h2("Quoi : la nature du travail réalisé"),
+  p("J'ai débuté par une étude approfondie de la documentation de l'API Temu, portant sur la création de produits, la structure de catégories obligatoires, les attributs spécifiques attendus selon chaque catégorie, les contraintes sur les images (formats, dimensions minimales) et la gestion des prix et des stocks. J'ai ensuite développé le mapping entre le modèle de données interne de la plateforme et le format attendu par Temu, en m'appuyant notamment sur le module de caractéristiques produit dont la refonte fait l'objet de la mission suivante de ce rapport, puisque la richesse et la fiabilité des caractéristiques internes conditionnaient directement la capacité à satisfaire les exigences de catégorisation imposées par Temu."),
+  p("J'ai mis en place la gestion de l'authentification aux appels d'API (clé d'API et jetons d'accès) ainsi que la gestion des limites de requêtes imposées par Temu, en intégrant une logique de mise en file d'attente pour éviter tout dépassement de quota lors de publications en masse. J'ai également développé une gestion fine des erreurs retournées par l'API, qui pouvaient être très spécifiques (catégorie manquante, attribut obligatoire absent, image non conforme), en les traduisant en messages compréhensibles affichés directement dans le back-office à destination des équipes support et, in fine, des clients. J'ai testé l'ensemble du connecteur sur un compte vendeur de test fourni par Temu avant son ouverture progressive à un premier groupe de clients pilotes, puis sa généralisation."),
+  h2("Comment : organisation personnelle et difficultés rencontrées"),
+  p("La nature évolutive et parfois incomplète de la documentation Temu m'a contraint à adopter une démarche itérative d'essais et d'ajustements, en complétant les zones d'ombre de la documentation par des tests empiriques sur l'environnement de test et, lorsque cela ne suffisait pas, par des échanges directs avec le support technique de Temu. J'ai organisé des points d'avancement hebdomadaires avec mon tuteur afin de partager les blocages rencontrés et d'ajuster le périmètre si nécessaire, plutôt que de chercher à tout anticiper avant de commencer le développement, ce qui aurait été peu réaliste compte tenu du caractère mouvant de la documentation disponible."),
+  p("La principale difficulté a porté sur la structure des catégories obligatoires imposées par Temu, sensiblement différente de celle des marketplaces déjà intégrées par l'entreprise, ce qui a nécessité une adaptation non triviale du module de mapping plutôt qu'une simple réutilisation des correspondances existantes. Une seconde difficulté a tenu au caractère limité de l'environnement de test mis à disposition par Temu, qui ne permettait pas de couvrir tous les cas réels, et m'a conduit à privilégier une mise en production très progressive, sur un nombre restreint de clients pilotes, avec un suivi rapproché des premiers retours avant toute généralisation."),
+  h2("Résultats obtenus"),
+  p("Le connecteur Temu a été livré et mis en production, permettant la publication de plus de quinze mille références produit au cours des premiers mois d'ouverture aux clients de l'entreprise. Le taux d'erreur de publication, qui dépassait vingt pour cent lors des premières tentatives sur l'environnement de test en raison des nombreux cas de catégorisation non anticipés, a été ramené à moins de cinq pour cent après plusieurs itérations de correction du module de mapping. Cette mission a permis à l'entreprise de proposer une nouvelle marketplace à forte demande commerciale, et le travail réalisé sur le mapping des catégories Temu a par ailleurs nourri en retour les réflexions menées sur le modèle de caractéristiques produit, présenté dans la mission suivante."),
+  h2("Compétences mobilisées et enseignements tirés"),
+  p("Cette mission, menée avec un degré d'autonomie plus important que les précédentes, m'a appris à avancer de façon structurée face à une documentation incomplète, en formulant des hypothèses explicites, en les testant rapidement sur un environnement de test, puis en les validant ou en les révisant plutôt qu'en restant bloqué en attendant une information qui ne viendrait pas nécessairement. J'ai également développé ma capacité à dialoguer avec un support technique externe, en formulant des demandes précises et documentées augmentant la probabilité d'obtenir une réponse utile. Enfin, cette mission m'a fait prendre conscience du caractère systémique du modèle de données interne de la plateforme : une intégration en apparence circonscrite à une seule marketplace a en réalité révélé des limites d'un autre module, celui des caractéristiques produit, illustrant l'intérêt de toujours considérer une évolution technique dans son contexte plus large."),
+];
+
+// ---------- MISSION 6 : PDM ----------
+const m6 = [
+  h1("Mission 6 — Caractéristiques de PDM (gestion des données produit)"),
+  h2("Pourquoi cette mission m'a-t-elle été confiée ?"),
+  p("Chaque marketplace impose, pour chaque catégorie de produit, un ensemble de caractéristiques obligatoires ou optionnelles spécifiques : couleur, taille, matière, dimensions, poids, ou encore des attributs propres à certaines familles de produits. Le module interne de gestion des caractéristiques produit (PDM, pour Product Data Management), reposant sur un modèle générique de type attribut-valeur, montrait des limites de plus en plus visibles à mesure que le nombre de marketplaces intégrées augmentait : des produits étaient régulièrement rejetés à la publication faute de caractéristique obligatoire correctement renseignée ou correctement mappée vers l'attribut attendu par la marketplace de destination, un constat déjà rencontré lors du traitement de tickets et accentué par les exigences spécifiques de Temu lors de son intégration."),
+  p("La mission qui m'a été confiée visait à faire évoluer ce modèle de caractéristiques afin de le rendre plus robuste et plus facilement administrable, tout en mettant en place des règles de validation automatique permettant de détecter, avant publication, l'absence ou l'invalidité d'une caractéristique requise, plutôt que de laisser cette détection se faire après coup, au moment du rejet par la marketplace."),
+  h2("Quoi : la nature du travail réalisé"),
+  p("J'ai d'abord étudié en détail le modèle de données existant, construit selon une logique attribut-valeur générique permettant en théorie de représenter n'importe quelle caractéristique sans modification de schéma de base de données, mais dont l'usage réel avait fini par accumuler des incohérences : unités de mesure non normalisées, valeurs multiples mal gérées pour certains attributs, absence de règles selon la catégorie du produit. J'ai fait évoluer ce modèle pour mieux structurer la notion d'unité (centimètre, kilogramme, etc.), la gestion des caractéristiques pouvant prendre plusieurs valeurs simultanément, et la définition des caractéristiques obligatoires ou optionnelles selon la catégorie du produit et selon la marketplace de destination."),
+  p("J'ai développé des outils de correspondance entre les caractéristiques internes et celles attendues par chaque marketplace, sous forme de tables de correspondance administrables directement depuis une interface back-office, sans nécessiter de nouveau déploiement applicatif lorsqu'une marketplace fait évoluer ses exigences. J'ai mis en place des règles de validation automatique exécutées avant toute tentative de publication, bloquant la publication et affichant un message explicite lorsqu'une caractéristique obligatoire est manquante ou invalide, plutôt que de laisser la marketplace renvoyer une erreur après coup. J'ai également développé, à destination des équipes support et des clients, une interface permettant de visualiser en un coup d'œil les caractéristiques manquantes ou invalides sur un produit donné, accompagnée de tests unitaires couvrant les principales règles de validation."),
+  h2("Comment : organisation personnelle et difficultés rencontrées"),
+  p("J'ai travaillé en étroite collaboration avec le product owner et avec les équipes ayant déjà exprimé des besoins spécifiques sur ce module, notamment dans le cadre de l'intégration de Temu, afin de concevoir un modèle de données répondant à des besoins réels plutôt qu'à des cas théoriques. La conception du nouveau modèle a fait l'objet de plusieurs séances de modélisation avec mon tuteur, formalisées par des schémas de données, avant toute implémentation, afin de limiter le risque de devoir revenir en arrière sur des choix structurants une fois le développement engagé."),
+  p("La principale difficulté a tenu à la tension entre la flexibilité nécessaire du modèle, devant pouvoir représenter des besoins très hétérogènes selon les familles de produits, et les contraintes de performance liées au volume important de données déjà existant, une évolution mal maîtrisée du modèle attribut-valeur pouvant dégrader sensiblement les temps de réponse de certaines requêtes. J'ai traité ce point en introduisant des index ciblés sur les requêtes les plus fréquentes et en limitant les évolutions de structure aux seuls besoins réellement avérés. Une seconde difficulté a porté sur la rétrocompatibilité avec les connecteurs déjà en place, notamment ceux développés dans le cadre de la mission relative aux passerelles, qui s'appuyaient sur l'ancien modèle de caractéristiques et qu'il a fallu faire évoluer en parallèle, sans interruption de service."),
+  h2("Résultats obtenus"),
+  p("Le nouveau modèle de caractéristiques a été déployé en production et est désormais utilisé par l'ensemble des connecteurs de la plateforme, y compris le connecteur Temu développé dans le cadre de la mission précédente. Le taux de rejet de produits à la publication pour cause de caractéristique manquante ou invalide, qui atteignait environ dix-huit pour cent sur certaines catégories avant la mise en place des règles de validation automatique, a été ramené à environ six pour cent. Les équipes support disposent désormais d'un outil leur permettant de diagnostiquer elles-mêmes ce type d'anomalie sans intervention systématique d'un développeur, ce qui a réduit d'autant le nombre de tickets remontés sur ce sujet précis."),
+  h2("Compétences mobilisées et enseignements tirés"),
+  p("Cette dernière mission de fond m'a permis d'appréhender concrètement les compromis inhérents à la modélisation de données dans un contexte réel : la tentation d'un modèle générique capable de tout représenter se heurte rapidement à des contraintes de performance et de lisibilité, et j'ai appris à arbitrer ces tensions en m'appuyant sur des besoins réels plutôt que sur des cas hypothétiques. Le fait d'intervenir sur un module transverse, déjà consommé par plusieurs autres parties de la plateforme, m'a également rendu plus rigoureux quant à la nécessité de préserver la rétrocompatibilité et de communiquer en amont avec les équipes susceptibles d'être affectées par une évolution, plutôt que de découvrir les impacts après coup."),
+];
+
+// ---------- GLOSSAIRE ----------
+const glossaire = [
+  h1("Glossaire"),
+  p("Afin de faciliter la lecture de ce rapport par un public non nécessairement familier des termes techniques employés dans le secteur de l'agrégation de flux marketplace, les principaux acronymes et notions utilisés sont définis ci-dessous."),
+  ...bullets([
+    "API (Application Programming Interface) : interface de programmation permettant à deux systèmes informatiques d'échanger des données ou de déclencher des actions de manière automatisée.",
+    "ERP (Enterprise Resource Planning) : logiciel de gestion intégré utilisé par une entreprise pour piloter ses stocks, ses commandes et sa comptabilité.",
+    "PIM (Product Information Management) : logiciel dédié à la centralisation et à la gestion des informations produit d'une entreprise avant leur diffusion sur différents canaux de vente.",
+    "PDM (Product Data Management) : terme employé dans ce rapport pour désigner la gestion des données et caractéristiques produit au sein de la plateforme de l'entreprise.",
+    "EAV (Entity-Attribute-Value) : modèle de données générique permettant de représenter un nombre variable d'attributs pour une entité sans modifier le schéma de la base de données.",
+    "ETL (Extract, Transform, Load) : ensemble de procédés permettant d'extraire des données depuis une ou plusieurs sources, de les transformer selon des règles définies, puis de les charger vers une destination.",
+    "SLA (Service Level Agreement) : engagement contractuel de niveau de service, par exemple un délai maximal de confirmation d'expédition imposé par une marketplace.",
+    "Cross dock (ou cross-docking) : mode logistique dans lequel une commande est expédiée directement par un fournisseur partenaire sans passage par un entrepôt intermédiaire.",
+    "CI/CD (Continuous Integration / Continuous Delivery) : pratiques consistant à intégrer et tester automatiquement le code à chaque modification, puis à faciliter son déploiement.",
+    "Sprint : période de travail de durée fixe, généralement de une à quatre semaines, utilisée dans les méthodologies agiles comme Scrum pour cadencer le développement.",
+  ]),
+];
+
+// ---------- BILAN DES COMPÉTENCES ----------
+function skillsTable() {
+  const widths = [3120, 6240];
+  const headerRow = new TableRow({
+    children: [
+      cell("Type de compétence", { header: true, width: widths[0] }),
+      cell("Compétences développées durant l'alternance", { header: true, width: widths[1] }),
+    ],
+  });
+  const data = [
+    ["Développement back-end", "PHP, Laravel, Eloquent, MySQL, conception d'API REST, gestion de l'authentification (Sanctum)"],
+    ["Développement front-end", "React, gestion de l'état applicatif, consommation d'API asynchrones, conception d'interfaces"],
+    ["Qualité et tests", "PHPUnit, tests unitaires et d'intégration, intégration continue, développement piloté par les tests"],
+    ["Intégration et données", "Conception de connecteurs, mapping de données, principes d'architecture ETL, modèle EAV"],
+    ["Méthodologie", "Agile / Scrum, gestion de tickets sous Jira, revue de code, Git / GitLab, documentation technique"],
+    ["Compétences transverses", "Diagnostic méthodique d'anomalies, communication avec des interlocuteurs non techniques, autonomie, gestion des priorités"],
+  ];
+  const rows = [headerRow].concat(data.map(r => new TableRow({
+    children: [
+      cell(r[0], { width: widths[0], size: 20 }),
+      cell(r[1], { width: widths[1], size: 20 }),
+    ],
+  })));
+  return new Table({ width: { size: CONTENT_W, type: WidthType.DXA }, columnWidths: widths, rows });
+}
+
+const bilanCompetences = [
+  h1("Bilan des compétences acquises"),
+  p("Avant de conclure ce rapport, il me semble utile de dresser une synthèse transversale des compétences développées au fil des six missions présentées, dans la mesure où certaines d'entre elles, notamment les compétences méthodologiques et transverses, ne sont pas propres à une mission en particulier mais se sont construites progressivement sur l'ensemble de la période d'alternance. Le tableau ci-dessous regroupe ces compétences par grande catégorie."),
+  skillsTable(),
+  p("Cette synthèse met en évidence un déséquilibre que j'assume pleinement : les compétences en développement back-end et en méthodologie de travail constituent le cœur de ce qui a été développé durant cette alternance, ce qui correspond à la nature même des missions confiées, majoritairement orientées vers la fiabilisation de traitements de données plutôt que vers la conception d'interfaces. Les compétences front-end acquises lors de la mission de migration, bien que plus limitées en volume, m'ont néanmoins permis de mieux comprendre les enjeux de collaboration entre développeurs back-end et front-end, une compréhension que je considère comme précieuse même pour un profil orienté principalement vers le back-end."),
+];
+
+const conclusion = [
+  h1("Conclusion"),
+  p("Les six missions présentées dans ce rapport, bien qu'engagées à des moments différents de mon alternance, forment un ensemble cohérent autour d'un même objectif : fiabiliser et moderniser la chaîne de traitement des flux entre les clients de l'entreprise et les marketplaces sur lesquelles ils diffusent leurs produits. La résolution de tickets m'a permis d'identifier, de l'intérieur, les points de fragilité réels de la plateforme ; ce constat a directement nourri la migration du tableau de bord de supervision vers Laravel et React ainsi que la mise en place de passerelles structurées et testées, préfigurant un futur outil ETL ; le projet Cross Dock a, de son côté, fiabilisé une chaîne logistique spécifique à fort enjeu commercial ; enfin, l'intégration de Temu et la refonte du modèle de caractéristiques produit se sont mutuellement enrichies, l'une révélant les limites de l'autre."),
+  p("Sur le plan technique, cette alternance m'a permis de consolider mes compétences en PHP et en bases de données relationnelles, mais surtout de découvrir et de mettre en pratique des technologies nouvelles pour moi telles que Laravel, React et la mise en place de tests automatisés selon une démarche structurée. Sur le plan méthodologique, j'ai appris à diagnostiquer une anomalie dans un système complexe avant de la corriger, à formaliser des règles métier implicites avant de les implémenter, et à organiser une migration ou une intégration de manière progressive afin d'en limiter les risques. Sur le plan humain, enfin, j'ai appris à collaborer avec des interlocuteurs aux profils variés — développeurs séniors, product owner, équipes opérationnelles et support — et à adapter ma communication selon que je m'adressais à un public technique ou métier."),
+  p("Les attentes formulées au début de chaque mission ont, dans l'ensemble, été remplies, et les indicateurs présentés dans ce rapport — taux de tickets traités, réduction des retards d'expédition, gain de performance du tableau de bord migré, couverture de tests des passerelles, volume de produits publiés sur Temu, réduction du taux de rejet pour caractéristiques manquantes — en témoignent. Certaines difficultés, notamment liées au caractère faiblement documenté de la base de code historique et à l'évolution rapide de la documentation de certaines marketplaces, ont nécessité des ajustements de méthode en cours de mission plutôt qu'une planification rigide définie à l'avance, ce qui constitue à mes yeux l'un des apprentissages les plus importants de cette alternance : la capacité à adapter sa démarche face à l'incertitude, tout en conservant une exigence constante de fiabilité sur un système en production utilisé par de nombreux clients."),
+  p("Cette alternance a également joué un rôle important dans la construction de mon projet professionnel. Si j'abordais le développement back-end et la gestion de données davantage comme une matière académique en début d'alternance, le fait d'avoir pu mesurer concrètement l'impact de mon travail sur l'activité réelle de l'entreprise — qu'il s'agisse d'un client évitant une pénalité grâce au projet Cross Dock, ou d'une équipe opérationnelle gagnant en autonomie grâce à un outil de diagnostic que j'ai développé — a confirmé mon intérêt pour ce type de poste, à l'intersection du développement logiciel et de la compréhension fine d'un domaine métier. C'est dans cette direction que je souhaite poursuivre la suite de mon parcours, en cherchant à approfondir en particulier les compétences acquises autour des architectures de traitement de données et des bonnes pratiques de test, qui ont constitué le fil rouge de la majorité des missions présentées dans ce rapport."),
+];
+
+const allSections = [].concat(remerciements, intro, m1, m2, m3, m4, m5, m6, glossaire, bilanCompetences, conclusion);
+
+// ---------- DOCUMENT ----------
+const doc = new Document({
+  creator: "Rapport d'alternance",
+  styles: {
+    default: { document: { run: { font: "Arial", size: 22 } } },
+    paragraphStyles: [
+      { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { size: 32, bold: true, font: "Arial", color: "1F4E5F" },
+        paragraph: { spacing: { before: 0, after: 240 }, outlineLevel: 0,
+          border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "1F4E5F", space: 4 } } } },
+      { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { size: 26, bold: true, font: "Arial", color: "1F4E5F" },
+        paragraph: { spacing: { before: 280, after: 160 }, outlineLevel: 1 } },
+      { id: "Heading3", name: "Heading 3", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { size: 23, bold: true, italics: true, font: "Arial", color: "333333" },
+        paragraph: { spacing: { before: 200, after: 120 }, outlineLevel: 2 } },
+    ],
+  },
+  numbering: {
+    config: [
+      { reference: "bullets",
+        levels: [{ level: 0, format: LevelFormat.BULLET, text: "•", alignment: AlignmentType.LEFT,
+          style: { paragraph: { indent: { left: 720, hanging: 360 } } } }] },
+    ],
+  },
+  sections: [
+    // ---- Page de garde ----
+    {
+      properties: {
+        page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } },
+      },
+      children: [
+        new Paragraph({ spacing: { before: 2000 }, alignment: AlignmentType.CENTER,
+          children: [new TextRun({ text: "[Nom de l'entreprise]", size: 24, color: "1F4E5F" })] }),
+        new Paragraph({ spacing: { before: 600, after: 200 }, alignment: AlignmentType.CENTER,
+          children: [new TextRun({ text: "Rapport d'activités d'alternance", bold: true, size: 56, color: "1F4E5F" })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 1200 },
+          children: [new TextRun({ text: "Agrégateur de flux marketplace", italics: true, size: 28 })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 1600, after: 100 },
+          children: [new TextRun({ text: "[Prénom NOM]", bold: true, size: 28 })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 100 },
+          children: [new TextRun({ text: "[Intitulé de la formation suivie]", size: 24 })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 100 },
+          children: [new TextRun({ text: "Période d'alternance : [mois année] – [mois année]", size: 24 })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 1000, after: 60 },
+          children: [new TextRun({ text: "Tuteur entreprise : [Nom, fonction]", size: 22 })] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 60 },
+          children: [new TextRun({ text: "Tuteur académique : [Nom]", size: 22 })] }),
+      ],
+    },
+    // ---- Sommaire ----
+    {
+      properties: {
+        page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } },
+      },
+      children: [
+        h1("Sommaire", false),
+        new TableOfContents("Sommaire", { hyperlink: true, headingStyleRange: "1-2" }),
+      ],
+    },
+    // ---- Corps du rapport ----
+    {
+      properties: {
+        page: { size: { width: PAGE_W, height: PAGE_H }, margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } },
+      },
+      headers: {
+        default: new Header({
+          children: [new Paragraph({
+            border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "CCCCCC", space: 4 } },
+            children: [new TextRun({ text: "Rapport d'alternance — [Nom de l'entreprise]", size: 16, color: "888888" })],
+          })],
+        }),
+      },
+      footers: {
+        default: new Footer({
+          children: [new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({ text: "Page ", size: 18, color: "888888" }),
+              new TextRun({ children: [PageNumber.CURRENT], size: 18, color: "888888" }),
+            ],
+          })],
+        }),
+      },
+      children: allSections,
+    },
+  ],
+});
+
+Packer.toBuffer(doc).then(buffer => {
+  fs.writeFileSync("/home/claude/rapport_alternance.docx", buffer);
+  console.log("OK, fichier généré.");
+});

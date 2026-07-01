@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      Green ETL — Optimiser les flux de données pour un numérique plus durable
+      Green ETL : Optimiser les flux de données pour un numérique plus durable
     </title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -932,7 +932,7 @@
         position: relative;
       }
       .moyen-card li::before {
-        content: "—";
+        content: ":";
         position: absolute;
         left: 0;
         color: var(--leaf);
@@ -1091,6 +1091,235 @@
         color: var(--ink-soft);
       }
 
+      /* ---------- glossaire ---------- */
+      .term-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 30px;
+      }
+      @media (max-width: 900px) {
+        .term-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 560px) {
+        .term-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .term-card {
+        background: var(--panel);
+        border: 1px solid var(--mist);
+        border-radius: 14px;
+        padding: 20px;
+      }
+      .term-card .term-name {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--forest-deep);
+        margin-bottom: 8px;
+      }
+      .term-card p {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+      }
+
+      /* ---------- exemple chiffré ---------- */
+      .example-box {
+        background: var(--panel);
+        border: 1px solid var(--mist);
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+        margin-top: 28px;
+        overflow-x: auto;
+      }
+      table.example-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        min-width: 560px;
+      }
+      table.example-table th,
+      table.example-table td {
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--mist);
+      }
+      table.example-table th {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--grey-data);
+        font-weight: 600;
+      }
+      table.example-table td:first-child {
+        color: var(--ink-soft);
+        font-weight: 500;
+      }
+      table.example-table td:nth-child(3) {
+        color: var(--forest-deep);
+        font-weight: 700;
+      }
+      .example-caption {
+        font-size: 12.5px;
+        color: var(--grey-data);
+        margin-top: 16px;
+      }
+
+      /* ---------- sources ---------- */
+      .source-intro {
+        background: var(--panel);
+        border: 1px solid var(--mist);
+        border-radius: 18px;
+        padding: 28px 30px;
+        box-shadow: var(--shadow);
+        margin-top: 28px;
+      }
+      .source-intro h4 {
+        font-family: var(--font-display);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--forest-deep);
+        margin-bottom: 10px;
+      }
+      .source-intro p {
+        font-size: 14.5px;
+        color: var(--ink-soft);
+      }
+      .source-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 26px;
+      }
+      @media (max-width: 760px) {
+        .source-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .source-card {
+        background: var(--panel);
+        border: 1px solid var(--mist);
+        border-radius: 16px;
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+      .source-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+      }
+      .source-card .src-figure {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: 26px;
+        color: var(--leaf);
+        line-height: 1.1;
+      }
+      .source-card .src-claim {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--forest-deep);
+        margin-top: 2px;
+      }
+      .source-card .src-detail {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
+      .source-card .src-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--mist);
+      }
+      .source-card .src-org {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--grey-data);
+        font-weight: 600;
+      }
+      .source-card .src-link {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--forest);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .source-card .src-link:hover {
+        text-decoration: underline;
+      }
+      .source-note {
+        display: flex;
+        gap: 12px;
+        background: var(--bg-alt);
+        border: 1px dashed var(--line);
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-top: 26px;
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        align-items: flex-start;
+      }
+      .source-note .sn-icon {
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      /* ---------- FAQ ---------- */
+      .faq-list {
+        margin-top: 28px;
+      }
+      details.faq-item {
+        background: var(--panel);
+        border: 1px solid var(--mist);
+        border-radius: 12px;
+        padding: 16px 22px;
+        margin-bottom: 12px;
+      }
+      details.faq-item summary {
+        cursor: pointer;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--forest-deep);
+        list-style: none;
+      }
+      details.faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+      details.faq-item summary::before {
+        content: "+ ";
+        color: var(--leaf);
+        font-weight: 900;
+      }
+      details.faq-item[open] summary::before {
+        content: "− ";
+      }
+      details.faq-item p {
+        font-size: 14px;
+        color: var(--ink-soft);
+        margin-top: 10px;
+      }
+      details.faq-item a {
+        color: var(--forest);
+        text-decoration: underline;
+      }
+
       /* ---------- footer ---------- */
       footer {
         background: var(--forest-deep);
@@ -1161,17 +1390,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 64px;
+        height: 72px;
         min-width: 160px;
-        padding: 0 18px;
+        padding: 10px 20px;
+        background: #fff;
+        border-radius: 12px;
       }
       .logo-slot img {
         height: 46px;
         width: auto;
-        max-width: 170px;
+        max-width: 150px;
         object-fit: contain;
-        filter: brightness(0) invert(1);
-        opacity: 0.92;
       }
       .logo-fallback {
         display: none;
@@ -1202,6 +1431,151 @@
         color: rgba(255, 255, 255, 0.5);
       }
 
+      /* ---------- quiz ---------- */
+      .quiz-card {
+        background: var(--panel);
+        border: 1px solid var(--mist);
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: var(--shadow);
+        margin-top: 28px;
+      }
+      .quiz-progress {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 26px;
+      }
+      .quiz-progress-track {
+        flex: 1;
+        height: 6px;
+        background: var(--mist);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .quiz-progress-fill {
+        height: 100%;
+        width: 20%;
+        background: linear-gradient(90deg, var(--leaf-soft), var(--leaf));
+        transition: width 0.3s ease;
+      }
+      .quiz-progress-label {
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        white-space: nowrap;
+      }
+      .quiz-question {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(16px, 2.4vw, 19px);
+        color: var(--forest-deep);
+        line-height: 1.3;
+        margin-bottom: 20px;
+      }
+      .quiz-options {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      button.quiz-option {
+        border: 1px solid var(--mist);
+        background: var(--bg-alt);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-family: var(--font-body);
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+      button.quiz-option:hover:not(:disabled) {
+        border-color: var(--leaf);
+      }
+      button.quiz-option.is-selected {
+        border-color: var(--forest);
+      }
+      button.quiz-option.is-correct {
+        background: rgba(79, 143, 74, 0.14);
+        border-color: var(--leaf);
+        color: var(--forest-deep);
+      }
+      button.quiz-option.is-incorrect {
+        background: rgba(232, 99, 28, 0.12);
+        border-color: var(--ember);
+        color: var(--forest-deep);
+      }
+      button.quiz-option:disabled {
+        cursor: default;
+      }
+      .quiz-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 24px;
+      }
+      .quiz-btn {
+        border: none;
+        background: var(--forest);
+        color: #fff;
+        font-family: var(--font-mono);
+        font-weight: 600;
+        font-size: 12.5px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        padding: 13px 24px;
+        border-radius: 99px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .quiz-btn:hover {
+        background: var(--forest-deep);
+      }
+      .quiz-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .quiz-result {
+        text-align: center;
+        padding: 6px 0;
+      }
+      .quiz-result .qr-eyebrow {
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ember);
+        font-weight: 600;
+      }
+      .quiz-result .qr-score {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-size: clamp(42px, 8vw, 62px);
+        color: var(--forest-deep);
+        margin: 8px 0 14px;
+      }
+      .quiz-result .qr-msg {
+        font-size: 15px;
+        color: var(--ink-soft);
+        max-width: 420px;
+        margin: 0 auto 26px;
+      }
+      .quiz-restart {
+        display: inline-flex;
+      }
+      @media (max-width: 560px) {
+        .quiz-card {
+          padding: 22px 20px;
+        }
+      }
+
       /* utility */
       .sr-only {
         position: absolute;
@@ -1214,6 +1588,88 @@
       button:focus-visible {
         outline: 2px solid var(--ember);
         outline-offset: 2px;
+      }
+
+      /* ---------- mobile refinements ---------- */
+      @media (max-width: 600px) {
+        .wrap {
+          padding: 0 18px;
+        }
+        .nav-inner {
+          padding: 12px 18px;
+        }
+        .section-pad {
+          padding: 56px 0;
+        }
+        .section-pad.tight {
+          padding: 44px 0;
+        }
+        .hero {
+          padding: 52px 0 40px;
+        }
+        .hero-sub {
+          font-size: 15.5px;
+        }
+        .hero-id-card {
+          gap: 16px 24px;
+        }
+        .pipe-demo {
+          padding: 20px 18px 20px;
+          margin-top: 34px;
+        }
+        .pipe-demo-head {
+          margin-bottom: 20px;
+        }
+        .mode-switch {
+          width: 100%;
+        }
+        .mode-switch button {
+          flex: 1;
+          padding: 9px 10px;
+          font-size: 11.5px;
+        }
+        .pipe-track {
+          height: 92px;
+        }
+        .pipe-node {
+          width: 34px;
+          height: 34px;
+          font-size: 13px;
+        }
+        .pipe-node-label {
+          font-size: 9px;
+        }
+        .odd-card,
+        .role-card,
+        .example-box,
+        .source-intro,
+        .source-card,
+        .quiz-card {
+          padding: 22px 20px;
+        }
+        .stat-big {
+          padding: 26px 22px;
+        }
+        .logos-row {
+          justify-content: center;
+          gap: 18px;
+          padding-top: 30px;
+        }
+        .logo-slot {
+          min-width: 120px;
+          height: 52px;
+        }
+        .logo-slot img {
+          height: 36px;
+        }
+        .footer-bottom {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        footer {
+          padding: 48px 0 28px;
+        }
       }
     </style>
   </head>
@@ -1235,12 +1691,16 @@
           <span></span><span></span><span></span>
         </button>
         <nav class="links" id="navLinks">
+          <a href="#glossaire">Glossaire</a>
           <a href="#contexte">Contexte</a>
           <a href="#projet">Projet</a>
           <a href="#deroulement">Déroulement</a>
+          <a href="#exemple">Exemple chiffré</a>
           <a href="#resultats">Résultats</a>
           <a href="#evaluation">Évaluation</a>
+          <a href="#faq">FAQ</a>
           <a href="#sources">Sources</a>
+          <a href="#quiz">Quiz</a>
         </nav>
       </div>
     </header>
@@ -1255,22 +1715,15 @@
         <section class="hero" data-stage="extraction">
           <div class="wrap">
             <div class="hero-top">
-              <span class="pill"
-                ><span class="dot"></span> ODD 9 — Industrie, innovation et
-                infrastructure</span
-              >
-              <span class="pill"
-                >Projet Alter'ODD · Ressource complémentaire au poster</span
-              >
             </div>
             <h1 class="hero-title">
               Optimiser les flux de données
               <em>pour un numérique plus durable.</em>
             </h1>
             <p class="hero-sub">
-              Ce site complète mon poster de soutenance : il détaille le
-              contexte de ma mission d'alternance, la démarche Green ETL mise en
-              place et les résultats environnementaux attendus.
+              Pas besoin d'être développeur pour lire cette page. On vous
+              explique, simplement et avec des chiffres vérifiables, comment
+              mieux gérer les données peut aider la planète.
             </p>
 
             <div class="pipe-demo" id="pipeDemo" data-mode="classic">
@@ -1336,8 +1789,8 @@
                     ></div>
                   </div>
                   <div class="m-caption">
-                    Réduction estimée à partir de travaux sur les Green Data
-                    Pipelines et les architectures ETL éco-responsables.
+                    Jusqu'à 30 % d'économie possible en évitant les
+                    traitements inutiles.
                   </div>
                 </div>
                 <div class="metric-box">
@@ -1351,8 +1804,7 @@
                     ></div>
                   </div>
                   <div class="m-caption">
-                    Extraction complète vs. extraction incrémentale (delta
-                    load).
+                    On ne garde que ce qui est utile, pas tout en double.
                   </div>
                 </div>
                 <div class="metric-box">
@@ -1366,7 +1818,7 @@
                     ></div>
                   </div>
                   <div class="m-caption">
-                    Nettoyage et déduplication en phase de transformation.
+                    Les doublons sont repérés et supprimés automatiquement.
                   </div>
                 </div>
               </div>
@@ -1382,18 +1834,16 @@
                 <div class="eyebrow">Comprendre le sujet</div>
                 <h2 class="section-title">Qu'est-ce qu'un ETL ?</h2>
                 <p class="lead">
-                  Les processus ETL (Extract, Transform, Load) collectent,
-                  transforment et chargent les données dans les systèmes
-                  décisionnels. Lorsqu'ils sont mal conçus, ils deviennent une
-                  source de gaspillage : traitements complets répétés, données
-                  dupliquées, surconsommation de ressources.
+                  Un ETL, c'est simplement le système qui va chercher des
+                  données, les nettoie, puis les range quelque part pour
+                  qu'elles soient utilisables. Le problème : mal conçu, il
+                  refait tout à chaque fois, garde des doublons et gaspille
+                  des ressources pour rien.
                 </p>
                 <ul class="check-list" style="margin-top: 24px">
-                  <li>Rendre ces traitements plus efficaces</li>
-                  <li>Les rendre plus sobres en ressources</li>
-                  <li>
-                    Les rendre plus responsables vis-à-vis de l'environnement
-                  </li>
+                  <li>Le rendre plus rapide et plus fiable</li>
+                  <li>Le rendre plus sobre en ressources</li>
+                  <li>Le rendre plus respectueux de l'environnement</li>
                 </ul>
               </div>
               <div class="odd-card reveal">
@@ -1401,53 +1851,104 @@
                   >ODD 9 · Industrie, innovation, infrastructure</span
                 >
                 <p>
-                  L'ODD 9 encourage l'innovation technologique responsable,
-                  l'amélioration de l'efficacité des infrastructures et le
-                  développement de solutions durables pour les entreprises.
+                  L'ODD 9 est un objectif de l'ONU qui pousse les entreprises
+                  à innover de façon responsable et à rendre leurs
+                  infrastructures plus durables.
                 </p>
                 <p style="margin-top: 14px">
-                  Le projet Green ETL répond directement à ces objectifs en
-                  optimisant les traitements de données tout en réduisant leur
-                  consommation de ressources.
+                  Green ETL s'inscrit directement dans cette logique : moins
+                  de gaspillage de données, plus d'efficacité.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- CONTEXTE -->
-        <section
-          class="section-pad tight"
-          data-stage="transformation"
-          id="contexte"
-          style="background: var(--bg-alt)"
-        >
+        <!-- GLOSSAIRE -->
+        <section class="section-pad tight" data-stage="extraction" id="glossaire">
           <div class="wrap">
-            <div class="eyebrow">Mon contexte</div>
-            <h2 class="section-title">
-              Une mission d'alternance au service du Green IT
-            </h2>
-            <div class="role-card reveal">
-              <div class="role-grid">
-                <div class="ritem">
-                  <b>Poste</b><span>Alternant en développement web</span>
-                </div>
-                <div class="ritem">
-                  <b>Secteur d'activité</b><span>E-commerce / SaaS</span>
-                </div>
+            <div class="eyebrow">Pour les novices</div>
+            <h2 class="section-title">Le vocabulaire expliqué simplement</h2>
+            <p class="lead reveal">
+              Pas besoin d'être développeur pour comprendre ce projet. Voici les
+              mots clés du poster, expliqués avec des mots du quotidien.
+            </p>
+            <div class="term-grid">
+              <div class="term-card reveal">
+                <div class="term-name">📦 ETL</div>
+                <p>
+                  Extract, Transform, Load : le "camion de livraison" des
+                  données. Il va chercher l'information à la source
+                  (<em>Extract</em>), la nettoie et la met au bon format
+                  (<em>Transform</em>), puis la dépose dans un entrepôt de
+                  données (<em>Load</em>).
+                </p>
               </div>
-              <h4>Mon rôle</h4>
-              <p>
-                Concevoir et développer des solutions web pour automatiser,
-                superviser et optimiser les flux de données échangés entre les
-                plateformes (marketplaces) et les systèmes des vendeurs.
-              </p>
-              <h4>Mes missions</h4>
-              <p style="margin-bottom: 0">
-                Mes missions liées au projet Green ETL s'inscrivent dans la
-                volonté de l'entreprise de proposer des solutions plus
-                performantes et plus respectueuses de l'environnement.
-              </p>
+              <div class="term-card reveal">
+                <div class="term-name">🏬 Data warehouse</div>
+                <p>
+                  L'entrepôt où sont rangées les données une fois traitées, un
+                  peu comme un grand hangar de stockage bien organisé, prêt à
+                  être consulté par les équipes.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">🔁 Extraction complète</div>
+                <p>
+                  À chaque exécution, on recopie <strong>toutes</strong> les
+                  données depuis le début, même celles qui n'ont pas changé.
+                  Comme réimprimer un annuaire entier alors qu'un seul numéro a
+                  changé.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">⚡ Delta load (incrémental)</div>
+                <p>
+                  On ne récupère que les données nouvelles ou modifiées depuis
+                  la dernière fois. Comme ne mettre à jour qu'une seule ligne
+                  de l'annuaire plutôt que de tout réimprimer.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">🧹 Déduplication</div>
+                <p>
+                  Supprimer les copies identiques d'une même information pour
+                  ne garder qu'un seul exemplaire, et éviter de stocker deux
+                  fois la même chose inutilement.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">🌫️ Dark data</div>
+                <p>
+                  Des données stockées "au cas où", jamais réellement utilisées
+                  ni analysées. Elles occupent de la place et consomment de
+                  l'énergie sans apporter aucune valeur.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">🖥️ Data center</div>
+                <p>
+                  Un bâtiment rempli d'ordinateurs (serveurs) qui font tourner
+                  les traitements et stockent les données. Il consomme de
+                  l'électricité pour fonctionner et pour se refroidir.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">🌱 Green IT</div>
+                <p>
+                  L'ensemble des pratiques visant à rendre l'informatique
+                  moins gourmande en ressources (énergie, matériel, stockage)
+                  et donc moins polluante.
+                </p>
+              </div>
+              <div class="term-card reveal">
+                <div class="term-name">🎯 ODD 9</div>
+                <p>
+                  Un des 17 "Objectifs de Développement Durable" fixés par
+                  l'ONU. Le n°9 porte sur l'industrie, l'innovation et les
+                  infrastructures durables.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -1456,36 +1957,27 @@
         <section class="section-pad" data-stage="transformation" id="projet">
           <div class="wrap">
             <div class="eyebrow">Description du projet</div>
-            <h2 class="section-title">Périmètre et objectifs</h2>
+            <h2 class="section-title">Quatre objectifs simples</h2>
             <p class="lead reveal">
-              Le projet porte sur l'optimisation des traitements de données au
-              sein des processus ETL de l'entreprise, avec quatre objectifs
-              concrets.
+              L'idée derrière ce projet peut se résumer en une phrase : faire
+              mieux, avec moins.
             </p>
             <div class="obj-grid">
               <div class="obj-card reveal">
                 <div class="obj-num">Objectif 01</div>
-                <p>
-                  Réduire la consommation de ressources : CPU, stockage, bande
-                  passante.
-                </p>
+                <p>Consommer moins de ressources : calcul, stockage, réseau.</p>
               </div>
               <div class="obj-card reveal">
                 <div class="obj-num">Objectif 02</div>
-                <p>
-                  Améliorer la performance et la fiabilité des flux de données.
-                </p>
+                <p>Rendre les échanges de données plus fiables et plus rapides.</p>
               </div>
               <div class="obj-card reveal">
                 <div class="obj-num">Objectif 03</div>
-                <p>
-                  Intégrer les bonnes pratiques de Green IT tout au long des
-                  processus.
-                </p>
+                <p>Adopter les bons réflexes du Green IT au quotidien.</p>
               </div>
               <div class="obj-card reveal">
                 <div class="obj-num">Objectif 04</div>
-                <p>Limiter le volume de données traitées et stockées.</p>
+                <p>Ne garder et ne traiter que les données qui servent vraiment.</p>
               </div>
             </div>
           </div>
@@ -1500,64 +1992,98 @@
         >
           <div class="wrap">
             <div class="eyebrow">Déroulement du projet</div>
-            <h2 class="section-title">De l'état des lieux aux perspectives</h2>
+            <h2 class="section-title">Comment on est passé de l'un à l'autre</h2>
             <div class="timeline">
               <div class="t-item reveal">
-                <div class="t-tag">État des lieux initial</div>
-                <h4>Un ETL classique, coûteux en ressources</h4>
+                <div class="t-tag">Le point de départ</div>
+                <h4>Un système qui tourne, mais qui gaspille</h4>
                 <p>
-                  Audit des traitements existants : extractions complètes à
-                  chaque exécution, données dupliquées et non nettoyées, forte
-                  consommation de CPU et de stockage inutile.
+                  Le constat : à chaque synchronisation, tout est relu depuis
+                  zéro. Résultat : des doublons s'accumulent et les serveurs
+                  travaillent pour rien.
                 </p>
               </div>
               <div class="t-item reveal">
-                <div class="t-tag">Avancée actuelle</div>
-                <h4>Mise en place progressive du Green ETL</h4>
+                <div class="t-tag">L'objectif</div>
+                <h4>Un ETL qui ne traite que le nécessaire</h4>
                 <p>
-                  Introduction d'une extraction incrémentale (delta load),
-                  d'étapes de nettoyage et de déduplication en transformation,
-                  et d'un chargement optimisé vers le data warehouse.
+                  On ne relit plus que les données modifiées, on supprime les
+                  doublons automatiquement, et on optimise ce qui est
+                  finalement stocké.
                 </p>
               </div>
               <div class="t-item reveal">
-                <div class="t-tag">Perspectives</div>
-                <h4>Généraliser et mesurer dans la durée</h4>
+                <div class="t-tag">La suite</div>
+                <h4>Étendre l'approche à plus grande échelle</h4>
                 <p>
-                  Étendre l'approche à l'ensemble des flux marketplace, mettre
-                  en place un suivi de la consommation énergétique des
-                  traitements et automatiser les contrôles qualité des données.
+                  Appliquer la même logique à tous les flux, suivre
+                  l'évolution de la consommation d'énergie dans le temps, et
+                  automatiser les contrôles de qualité.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- MOYENS -->
-        <section class="section-pad" data-stage="transformation" id="moyens">
+        <!-- EXEMPLE CHIFFRÉ -->
+        <section class="section-pad" data-stage="transformation" id="exemple">
           <div class="wrap">
-            <div class="eyebrow">Moyens mobilisés</div>
-            <h2 class="section-title">Ressources et accompagnement</h2>
-            <div class="moyens-grid">
-              <div class="moyen-card reveal">
-                <h4>📊 Données &amp; ressources</h4>
-                <ul>
-                  <li>Journaux d'exécution des traitements ETL existants</li>
-                  <li>
-                    Indicateurs d'infrastructure : CPU, stockage, bande passante
-                  </li>
-                  <li>Travaux de recherche sur les architectures Green ETL</li>
-                </ul>
-              </div>
-              <div class="moyen-card reveal">
-                <h4>🤝 Accompagnement</h4>
-                <ul>
-                  <li>Suivi régulier de mon tuteur en entreprise</li>
-                  <li>Appui des équipes data et infrastructure</li>
-                  <li>Référent pédagogique de la formation</li>
-                </ul>
-              </div>
+            <div class="eyebrow">Un exemple concret</div>
+            <h2 class="section-title">
+              À quoi ressemble le gain, en chiffres ?
+            </h2>
+            <p class="lead reveal">
+              Voici un exemple concret : un catalogue de
+              <strong>50 000 produits</strong>, synchronisé chaque nuit vers
+              plusieurs places de marché.
+            </p>
+            <div class="example-box reveal">
+              <table class="example-table">
+                <thead>
+                  <tr>
+                    <th>Indicateur</th>
+                    <th>ETL classique</th>
+                    <th>Green ETL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Produits relus à chaque synchronisation</td>
+                    <td>50 000 (100 % du catalogue)</td>
+                    <td>≈ 1 500 à 2 500 (seulement les produits modifiés dans la journée)</td>
+                  </tr>
+                  <tr>
+                    <td>Lignes dupliquées en base avant nettoyage</td>
+                    <td>Non détectées, accumulées au fil du temps</td>
+                    <td>Identifiées et supprimées à chaque passage</td>
+                  </tr>
+                  <tr>
+                    <td>Volume de stockage sur 1 an</td>
+                    <td>Croissance continue, y compris de données inutiles</td>
+                    <td>Croissance limitée aux données réellement utiles</td>
+                  </tr>
+                  <tr>
+                    <td>Énergie consommée par le traitement</td>
+                    <td>100 % (référence)</td>
+                    <td>≈ 70 % (économie visée : jusqu'à -30 %)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="example-caption">
+                Ces ordres de grandeur illustrent le principe du Green ETL :
+                traiter uniquement les 3 à 5 % de données qui ont réellement
+                changé, plutôt que de réanalyser 100 % du catalogue chaque
+                nuit. Ils sont donnés à titre pédagogique pour un cas type ;
+                les gains réels dépendent de l'architecture et du volume de
+                données de chaque entreprise (voir sources en bas de page).
+              </p>
             </div>
+
+            <p class="lead reveal" style="margin-top: 40px">
+              Pourquoi ça compte ? Parce que le numérique pèse déjà environ 4 % de
+              l'empreinte carbone de la France, et cette part augmente. Chaque
+              traitement évité compte, même à petite échelle.
+            </p>
           </div>
         </section>
 
@@ -1580,12 +2106,8 @@
                 </div>
                 <div class="s-number"><span id="counterStat">0</span>%</div>
                 <div class="s-cap">
-                  Les travaux sur les Green Data Pipelines montrent qu'une
-                  optimisation des traitements ETL (delta load, déduplication,
-                  réduction du stockage et des calculs inutiles) peut conduire à
-                  des économies d'énergie significatives. La valeur de 30 %
-                  présentée ici constitue un objectif réaliste observé dans
-                  certains cas d'usage.
+                  C'est l'objectif visé en évitant les traitements en double
+                  et en ne gardant que les données utiles.
                 </div>
               </div>
               <div class="mini-cards">
@@ -1632,55 +2154,78 @@
           </div>
         </section>
 
-        <!-- EVALUATION -->
-        <section class="section-pad" data-stage="chargement" id="evaluation">
-          <div class="wrap">
-            <div class="eyebrow">Évaluation</div>
-            <h2 class="section-title">Bilan d'étape</h2>
-            <div class="eval-grid">
-              <div>
-                <div class="eval-col-title pos">👍 Points positifs</div>
-                <div class="eval-card reveal">
-                  <h5>Aide et accompagnement de l'équipe</h5>
-                  <p>
-                    Un soutien régulier de mon tuteur et des équipes data/infra
-                    m'a permis de monter en compétences et d'avancer
-                    efficacement sur le projet.
-                  </p>
-                </div>
-                <div class="eval-card reveal">
-                  <h5>Impact concret et valorisant</h5>
-                  <p>
-                    Le projet a un impact réel sur la performance et l'empreinte
-                    environnementale de l'entreprise, ce qui est motivant et
-                    aligné avec les enjeux actuels.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div class="eval-col-title neg">👎 Points négatifs</div>
-                <div class="eval-card neg reveal">
-                  <h5>Dépendance aux équipes data/infra</h5>
-                  <p>
-                    Certaines évolutions nécessitent des accès ou des
-                    validations externes, ce qui peut ralentir le rythme
-                    d'avancement du projet.
-                  </p>
-                </div>
-                <div class="eval-card neg reveal">
-                  <h5>Difficulté à mesurer le gain réel</h5>
-                  <p>
-                    L'absence d'outils de mesure énergétique fins en place rend
-                    complexe la quantification précise des économies réalisées
-                    au quotidien.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
+
+    <section class="section-pad tight" id="faq">
+      <div class="wrap">
+        <div class="eyebrow">FAQ</div>
+        <h2 class="section-title">Pour aller plus loin</h2>
+        <div class="faq-list">
+          <details class="faq-item reveal">
+            <summary>Pourquoi les données consomment-elles de l'énergie ?</summary>
+            <p>
+              Chaque donnée stockée occupe de l'espace sur un serveur, et
+              chaque traitement (copier, transformer, comparer des données)
+              fait travailler un processeur. Serveurs et processeurs
+              consomment de l'électricité pour fonctionner et pour être
+              refroidis. Plus on traite ou stocke de données inutiles, plus
+              cette consommation augmente sans raison.
+            </p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>Le Green ETL, ça veut dire qu'on perd des données ?</summary>
+            <p>
+              Non. L'objectif n'est pas de supprimer des données utiles, mais
+              d'éviter de retraiter en boucle des données qui n'ont pas
+              changé, et de supprimer les doublons ou les données obsolètes
+              qui n'ont plus aucune utilité (voir le terme "dark data" dans le
+              glossaire).
+            </p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>D'où vient le chiffre de -30 % d'énergie ?</summary>
+            <p>
+              C'est un ordre de grandeur observé dans certains travaux sur les
+              pipelines de données optimisés (compression, mise en cache,
+              suppression des traitements redondants), et non une garantie
+              universelle. Le gain réel dépend du volume de données, de
+              l'architecture existante et du niveau d'optimisation mis en
+              place. Voir le détail dans la section
+              <a href="#sources">Sources</a>.
+            </p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>
+              Est-ce que ça a vraiment un impact si une seule entreprise
+              optimise ses traitements ?
+            </summary>
+            <p>
+              Prise isolément, une entreprise a un impact limité. Mais les
+              centres de données représentent déjà environ 1,5 % de la
+              consommation électrique mondiale selon l'IEA, et cette part
+              augmente rapidement avec la multiplication des usages
+              numériques. Multiplier les bonnes pratiques (Green IT, Green
+              ETL) à l'échelle de nombreuses entreprises a un effet cumulatif
+              réel, comme le rappelle l'ODD 9 de l'ONU sur l'innovation
+              industrielle responsable.
+            </p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>Qu'est-ce qui différencie un ETL "classique" d'un ETL "green" ?</summary>
+            <p>
+              Un ETL classique relit souvent l'intégralité des données à
+              chaque exécution, sans nettoyage systématique des doublons. Un
+              Green ETL introduit une extraction incrémentale (seulement les
+              nouvelles données), un nettoyage et une déduplication
+              automatiques, et un chargement optimisé qui limite le volume
+              inutilement stocké. Le comparateur interactif en haut de page
+              illustre cette différence.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
 
     <section
       class="section-pad tight"
@@ -1688,104 +2233,173 @@
       style="background: var(--bg-alt)"
     >
       <div class="wrap">
-        <div class="eyebrow">Références scientifiques</div>
-        <h2 class="section-title">Sources et justification du Green ETL</h2>
+        <div class="eyebrow">On ne vous demande pas de nous croire</div>
+        <h2 class="section-title">D'où viennent ces chiffres ?</h2>
+        <p class="lead reveal">
+          Chaque chiffre de cette page vient d'une source publique, que vous pouvez retrouver ici !
+        </p>
 
-        <div class="role-card reveal">
-          <h4>Pourquoi parler de Green ETL ?</h4>
-          <p>
-            Le Green ETL consiste à optimiser les processus d'extraction, de
-            transformation et de chargement des données afin de réduire leur
-            impact environnemental.
-          </p>
+        <div class="source-grid">
+          <div class="source-card reveal">
+            <div class="src-figure">≈ 4 %</div>
+            <div class="src-claim">
+              du CO₂ émis par la France vient du numérique
+            </div>
+            <div class="src-detail">
+              Et cette part augmente chaque année, avec la multiplication des
+              usages numériques.
+            </div>
+            <div class="src-meta">
+              <span class="src-org">Arcep</span>
+              <a
+                href="https://en.arcep.fr/news/press-releases/view/n/the-environment-190122.html"
+                target="_blank"
+                rel="noopener"
+                class="src-link"
+                >Voir la source ↗</a
+              >
+            </div>
+          </div>
 
-          <ul class="check-list" style="margin-bottom: 20px">
-            <li>Extraction incrémentale (Delta Load)</li>
-            <li>Réduction des traitements inutiles</li>
-            <li>Déduplication des données</li>
-            <li>Optimisation du stockage</li>
-            <li>Réduction de l'utilisation CPU et mémoire</li>
-          </ul>
+          <div class="source-card reveal">
+            <div class="src-figure">≈ 1,5 %</div>
+            <div class="src-claim">
+              de l'électricité mondiale sert à faire tourner les data centers
+            </div>
+            <div class="src-detail">
+              Soit environ 415 TWh par an. Ce chiffre devrait doubler d'ici
+              2030 avec la croissance du cloud et de l'IA.
+            </div>
+            <div class="src-meta">
+              <span class="src-org">IEA (2025)</span>
+              <a
+                href="https://www.iea.org/reports/energy-and-ai/executive-summary"
+                target="_blank"
+                rel="noopener"
+                class="src-link"
+                >Voir la source ↗</a
+              >
+            </div>
+          </div>
 
-          <h4>Justification du chiffre « -30 % d'énergie »</h4>
+          <div class="source-card reveal">
+            <div class="src-figure">≈ 52 %</div>
+            <div class="src-claim">
+              des données stockées par les entreprises ne servent à rien
+            </div>
+            <div class="src-detail">
+              Elles sont soit oubliées ("dark data"), soit en double, soit
+              périmées. Exactement ce qu'un Green ETL cherche à éviter.
+            </div>
+            <div class="src-meta">
+              <span class="src-org">Veritas - Databerg</span>
+              <a
+                href="https://www.veritas.com/en/uk/insights/data-insight"
+                target="_blank"
+                rel="noopener"
+                class="src-link"
+                >Voir la source ↗</a
+              >
+            </div>
+          </div>
 
-          <p>
-            Le chiffre présenté dans ce projet ne constitue pas une valeur
-            universelle mais un objectif réaliste issu de la littérature
-            scientifique sur les Green Data Pipelines et de retours d'expérience
-            industriels.
-          </p>
+          <div class="source-card reveal">
+            <div class="src-figure">-20 à -30 %</div>
+            <div class="src-claim">
+              d'énergie économisée avec un pipeline de données optimisé
+            </div>
+            <div class="src-detail">
+              En évitant les traitements en double et en compressant mieux les
+              données. C'est la base du chiffre "-30 %" présenté plus haut.
+            </div>
+            <div class="src-meta">
+              <span class="src-org">Data Expert</span>
+              <a
+                href="https://www.dataexpert.io/blog/green-data-pipelines-vs-traditional-pipelines"
+                target="_blank"
+                rel="noopener"
+                class="src-link"
+                >Voir la source ↗</a
+              >
+            </div>
+          </div>
 
-          <p>
-            Les études montrent que la réduction des volumes traités,
-            l'optimisation du stockage et la suppression des traitements
-            redondants permettent de diminuer significativement la consommation
-            énergétique des infrastructures de données.
-          </p>
+          <div class="source-card reveal">
+            <div class="src-figure">1 vs 100 %</div>
+            <div class="src-claim">
+              seule la donnée modifiée est retraitée, pas tout le catalogue
+            </div>
+            <div class="src-detail">
+              C'est le principe du "delta load" : ne relire que ce qui a
+              changé plutôt que de tout recopier à chaque fois.
+            </div>
+            <div class="src-meta">
+              <span class="src-org">Hevo Data</span>
+              <a
+                href="https://hevodata.com/learn/incremental-data-load-vs-full-load/"
+                target="_blank"
+                rel="noopener"
+                class="src-link"
+                >Voir la source ↗</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <h4>Références bibliographiques</h4>
+    <!-- QUIZ -->
+    <section class="section-pad tight" id="quiz">
+      <div class="wrap">
+        <div class="eyebrow">Testez-vous</div>
+        <h2 class="section-title">Petit quiz Green ETL</h2>
+        <p class="lead reveal">
+          5 questions pour vérifier ce que vous avez retenu de la page.
+        </p>
 
-          <p>
-            <strong>[1]</strong> Mandala, N. (2024).
-            <em>Sustainable Data Engineering: Green Data Pipelines.</em>
-          </p>
-          <p>
-            <strong>[2]</strong> Mandala, N. (2020).
-            <em>Energy-Efficient ETL Workflows.</em>
-          </p>
-          <p>
-            <strong>[3]</strong> Arul, K. (2023).
-            <em
-              >Energy-efficient Data Engineering Practices for Big Data
-              Workloads in Cloud Infrastructure.</em
-            >
-          </p>
-          <p>
-            <strong>[4]</strong> Databricks & SNCF.
-            <em>Accelerating Sustainable Transportation into the Future.</em>
-          </p>
+        <div class="quiz-card reveal" id="quizCard">
+          <div id="quizBody">
+            <div class="quiz-progress">
+              <div class="quiz-progress-track">
+                <div class="quiz-progress-fill" id="quizProgressFill"></div>
+              </div>
+              <div class="quiz-progress-label" id="quizProgressLabel">
+                Question 1 / 5
+              </div>
+            </div>
+            <div class="quiz-question" id="quizQuestion"></div>
+            <ul class="quiz-options" id="quizOptions"></ul>
+            <div class="quiz-actions">
+              <button
+                class="quiz-btn"
+                id="quizNextBtn"
+                type="button"
+                disabled
+              >
+                Question suivante
+              </button>
+            </div>
+          </div>
 
-          <p style="margin-top: 20px; font-size: 13px">
-            Les gains réels dépendent du contexte technique, du volume de
-            données, de l'architecture mise en œuvre et du niveau d'optimisation
-            atteint.
-          </p>
+          <div class="quiz-result" id="quizResult" hidden>
+            <div class="qr-eyebrow">Résultat</div>
+            <div class="qr-score" id="quizScore">0 / 5</div>
+            <p class="qr-msg" id="quizMessage"></p>
+            <button class="quiz-btn quiz-restart" id="quizRestartBtn" type="button">
+              Refaire le quiz
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
     <footer data-stage="warehouse" id="footerWarehouse">
       <div class="wrap">
-        <div class="footer-top">
-          <div>
-            <h3>
-              GREEN ETL — Optimiser les flux de données pour un numérique plus
-              durable
-            </h3>
-            <p>
-              Site réalisé en complément du poster de soutenance, dans le cadre
-              du projet Alter'ODD — ODD 9, Industrie, innovation et
-              infrastructure.
-            </p>
-          </div>
-          <div class="id-grid">
-            <div class="id-block"><b>Auteur·e</b><span>[Prénom NOM]</span></div>
-            <div class="id-block">
-              <b>Formation</b><span>[Nom de la formation]</span>
-            </div>
-            <div class="id-block">
-              <b>Entreprise</b><span>[Nom de l'entreprise]</span>
-            </div>
-            <div class="id-block">
-              <b>ID Poster M1</b><span>[Référence]</span>
-            </div>
-          </div>
-        </div>
 
         <div class="logos-row">
           <div class="logo-slot">
             <img
-              src="logo-amidex.png"
+              src="logo_Amidex_couleur_RVB (1).png"
               alt="Logo AMIDEX"
               onerror="
                 this.style.display = 'none';
@@ -1796,7 +2410,7 @@
           </div>
           <div class="logo-slot">
             <img
-              src="logo-formasup.png"
+              src="formasup.jpg"
               alt="Logo CFA FORMASUP Méditerranée"
               onerror="
                 this.style.display = 'none';
@@ -1807,23 +2421,20 @@
           </div>
           <div class="logo-slot">
             <img
-              src="logo-amu.png"
-              alt="Logo Aix-Marseille Université"
+              src="Logo-Miage.jpeg"
+              alt="Logo MIAGE"
               onerror="
                 this.style.display = 'none';
                 this.nextElementSibling.style.display = 'flex';
               "
             />
-            <div class="logo-fallback">AIX-MARSEILLE<br />UNIVERSITÉ</div>
+            <div class="logo-fallback">MIAGE</div>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <span
-            >Projet financé par AMIDEX · porté avec le CFA FORMASUP Méditerranée
-            et Aix-Marseille Université.</span
-          >
-          <span>Ressource complémentaire au poster — Alter'ODD</span>
+          
+          <span>Ressource complémentaire au poster - Alter'ODD</span>
         </div>
       </div>
     </footer>
@@ -1971,6 +2582,168 @@
         }
         document.addEventListener("scroll", animateCounter, { passive: true });
         animateCounter();
+
+        /* ---- quiz ---- */
+        var quizQuestions = [
+          {
+            q: "Que signifie le sigle ETL ?",
+            options: [
+              "Extract, Transform, Load",
+              "Energy, Transfer, Link",
+              "Extend, Test, Launch",
+              "External Traffic Layer",
+            ],
+            correct: 0,
+          },
+          {
+            q: "Qu'est-ce que le \"delta load\" (chargement incrémental) ?",
+            options: [
+              "Recopier toutes les données à chaque exécution",
+              "Ne récupérer que les données nouvelles ou modifiées",
+              "Supprimer toutes les anciennes données",
+              "Dupliquer les données pour plus de sécurité",
+            ],
+            correct: 1,
+          },
+          {
+            q: "Qu'appelle-t-on le \"dark data\" ?",
+            options: [
+              "Des données chiffrées et sécurisées",
+              "Des données stockées mais jamais réellement utilisées",
+              "Des données supprimées par erreur",
+              "Des données provenant du dark web",
+            ],
+            correct: 1,
+          },
+          {
+            q: "Quel ordre de grandeur d'économie d'énergie vise un Green ETL bien optimisé ?",
+            options: [
+              "Jusqu'à -30 %",
+              "Jusqu'à -80 %",
+              "Aucune économie mesurable",
+              "Exactement -50 %",
+            ],
+            correct: 0,
+          },
+          {
+            q: "L'ODD 9 de l'ONU porte sur quel thème ?",
+            options: [
+              "Éducation de qualité",
+              "Vie aquatique",
+              "Industrie, innovation et infrastructure",
+              "Lutte contre la pauvreté",
+            ],
+            correct: 2,
+          },
+        ];
+
+        var quizState = { index: 0, score: 0, answered: false };
+        var quizQuestionEl = document.getElementById("quizQuestion");
+        var quizOptionsEl = document.getElementById("quizOptions");
+        var quizNextBtn = document.getElementById("quizNextBtn");
+        var quizProgressFill = document.getElementById("quizProgressFill");
+        var quizProgressLabel = document.getElementById("quizProgressLabel");
+        var quizBody = document.getElementById("quizBody");
+        var quizResult = document.getElementById("quizResult");
+        var quizScoreEl = document.getElementById("quizScore");
+        var quizMessageEl = document.getElementById("quizMessage");
+        var quizRestartBtn = document.getElementById("quizRestartBtn");
+
+        function renderQuizQuestion() {
+          var current = quizQuestions[quizState.index];
+          quizState.answered = false;
+          quizNextBtn.disabled = true;
+          quizNextBtn.textContent =
+            quizState.index === quizQuestions.length - 1
+              ? "Voir mon résultat"
+              : "Question suivante";
+
+          quizProgressFill.style.width =
+            ((quizState.index) / quizQuestions.length) * 100 + "%";
+          quizProgressLabel.textContent =
+            "Question " +
+            (quizState.index + 1) +
+            " / " +
+            quizQuestions.length;
+
+          quizQuestionEl.textContent = current.q;
+          quizOptionsEl.innerHTML = "";
+
+          current.options.forEach(function (optionText, i) {
+            var li = document.createElement("li");
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "quiz-option";
+            btn.textContent = optionText;
+            btn.addEventListener("click", function () {
+              if (quizState.answered) return;
+              quizState.answered = true;
+              var isCorrect = i === current.correct;
+              if (isCorrect) {
+                quizState.score += 1;
+                btn.classList.add("is-correct");
+              } else {
+                btn.classList.add("is-incorrect");
+                var correctBtn =
+                  quizOptionsEl.children[current.correct].firstChild;
+                correctBtn.classList.add("is-correct");
+              }
+              Array.prototype.forEach.call(
+                quizOptionsEl.querySelectorAll(".quiz-option"),
+                function (b) {
+                  b.disabled = true;
+                },
+              );
+              quizNextBtn.disabled = false;
+            });
+            li.appendChild(btn);
+            quizOptionsEl.appendChild(li);
+          });
+        }
+
+        function showQuizResult() {
+          quizProgressFill.style.width = "100%";
+          quizBody.hidden = true;
+          quizResult.hidden = false;
+          quizScoreEl.textContent =
+            quizState.score + " / " + quizQuestions.length;
+
+          var msg;
+          if (quizState.score === quizQuestions.length) {
+            msg =
+              "Score parfait ! Vous avez toutes les clés du Green ETL en tête.";
+          } else if (quizState.score >= quizQuestions.length / 2) {
+            msg =
+              "Pas mal ! Vous avez saisi l'essentiel, relisez le glossaire pour aller plus loin.";
+          } else {
+            msg =
+              "C'est un début : n'hésitez pas à relire la page, notamment le glossaire et l'exemple chiffré.";
+          }
+          quizMessageEl.textContent = msg;
+        }
+
+        quizNextBtn.addEventListener("click", function () {
+          if (!quizState.answered) return;
+          quizState.index += 1;
+          if (quizState.index >= quizQuestions.length) {
+            showQuizResult();
+          } else {
+            renderQuizQuestion();
+          }
+        });
+
+        quizRestartBtn.addEventListener("click", function () {
+          quizState.index = 0;
+          quizState.score = 0;
+          quizState.answered = false;
+          quizBody.hidden = false;
+          quizResult.hidden = true;
+          renderQuizQuestion();
+        });
+
+        if (quizQuestionEl) {
+          renderQuizQuestion();
+        }
       })();
     </script>
   </body>
